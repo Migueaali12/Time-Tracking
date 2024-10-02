@@ -4,4 +4,6 @@
 
 #root {
   font-family: "Inter", system-ui;
+  margin: 0;
+  padding: 0;
 }

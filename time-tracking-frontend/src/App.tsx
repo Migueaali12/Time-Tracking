@@ -1,8 +1,12 @@
+import { LoginLayout } from './components/Layaout'
+import { LoginForm } from './components/LoginForm'
 
 function App() {
   return (
     <>
-      <h2>Hola proyecto</h2>
+      <LoginLayout>
+        <LoginForm />
+      </LoginLayout>
     </>
   )
 }

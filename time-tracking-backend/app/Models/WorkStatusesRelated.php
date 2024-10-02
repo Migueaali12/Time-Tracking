@@ -13,4 +13,5 @@ class WorkStatusesRelated extends Model
     protected $table = 'work_statuses_relateds';
 
     protected $fillable = ['work_status_id', 'work_status_related_id', 'status'];
+    
 }

@@ -15,7 +15,7 @@ import { object, string } from 'yup'
 
 export function LoginForm() {
   const validationSchema = object({
-    username: string().required('El nombre de usuario es requerido'),
+    email: string().required('El email es requerido'),
     password: string().required('La contraseña es requerida'),
   })
 
@@ -25,21 +25,21 @@ export function LoginForm() {
         <CardBody>
           <h1 className="font-semibold text-2xl p-5 justify-self-center">Time Tracking</h1>
           <Formik
-            initialValues={{ username: '', password: '', rememberMe: false }}
+            initialValues={{ email: '', password: '', rememberMe: false }}
             validationSchema={validationSchema}
             onSubmit={(values, actions) => {
               console.log(values, actions)
             }}
           >
-            {(props: FormikProps<{ username: string; password: string; rememberMe: boolean }>) => (
+            {(props: FormikProps<{ email: string; password: string; rememberMe: boolean }>) => (
               <Form>
-                {/* Username */}
-                <Field name="username">
+                {/* email */}
+                <Field name="email">
                   {({ field, form }: FieldProps) => (
-                    <FormControl isInvalid={!!form.errors.username && !!form.touched.username}>
-                      <FormLabel>Nombre de usuario</FormLabel>
-                      <Input {...field} placeholder="nombre de usuario" />
-                      <FormErrorMessage>{form.errors.username?.toString()}</FormErrorMessage>
+                    <FormControl isInvalid={!!form.errors.email && !!form.touched.email}>
+                      <FormLabel>Email</FormLabel>
+                      <Input {...field} placeholder="correo electrónico" />
+                      <FormErrorMessage>{form.errors.email?.toString()}</FormErrorMessage>
                     </FormControl>
                   )}
                 </Field>

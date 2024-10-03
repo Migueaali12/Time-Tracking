@@ -13,9 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
 
     ->withMiddleware(function (Middleware $middleware) {
-        // $middleware->web(append: [
-        //     \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-        // ]);
+        $middleware->statefulApi();
     })
 
     ->withExceptions(function (Exceptions $exceptions) {

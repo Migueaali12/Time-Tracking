@@ -78,13 +78,13 @@ class UserController extends Controller
             if ($validationErrorResponse) {
                 return $validationErrorResponse;
             }
-
+            
             if(!Auth::attempt($request->only(['email', 'password']))) {
                 return response()->json(['message' => 'Credenciales inválidas'], 401);
             }
 
             $user = User::where('email', $request->email)->first();
-
+            
             $data = [
                 'status' => 200,
                 'message' => 'Inicio de sesión exitoso',

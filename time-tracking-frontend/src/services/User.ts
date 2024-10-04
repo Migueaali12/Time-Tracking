@@ -1,6 +1,6 @@
 
 import { FormikHelpers } from 'formik'
-import { UserAlert } from '../hooks/Alert'
+import { UserAlertProps } from '../hooks/Alert'
 
 interface RegisterProps {
   values: {
@@ -17,7 +17,7 @@ interface RegisterProps {
     password: string
     passwordConfirm: string
   }>
-  setAlert: React.Dispatch<React.SetStateAction<UserAlert>>
+  setAlert: React.Dispatch<React.SetStateAction<UserAlertProps>>
 }
 
 interface LoginProps {
@@ -30,7 +30,7 @@ interface LoginProps {
     password: string;
     rememberMe: boolean;
 }>
-  setAlert: React.Dispatch<React.SetStateAction<UserAlert>>
+  setAlert: React.Dispatch<React.SetStateAction<UserAlertProps>> 
 }
 
 const URL_API = 'http://127.0.0.1:8000/api/user'
@@ -80,6 +80,7 @@ export async function loginUser({ values, actions, setAlert }: LoginProps) {
     const data = await res.json()
 
     if(res.ok) {
+      localStorage.setItem('authToken', data.token)
       setAlert({ hidden: false, type: 'success', content: data.message })
       actions.resetForm()
     } else {
@@ -90,3 +91,4 @@ export async function loginUser({ values, actions, setAlert }: LoginProps) {
   }
   actions.setSubmitting(false)
 }
+

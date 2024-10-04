@@ -3,6 +3,7 @@ import { Formik, FormikProps, Form, Field, FieldProps } from 'formik'
 import { object, string } from 'yup'
 import { useAlert } from '../hooks/Alert'
 import { loginUser } from '../services/User'
+import { LoginLayout } from './Layaout'
 
 export function LoginForm() {
   const validationSchema = object({
@@ -13,9 +14,9 @@ export function LoginForm() {
   const { setAlert, AlertComponent } = useAlert()
 
   return (
-    <section>
-      <Card width={'sm'} height={'md'} alignItems={'center'}>
-        <CardBody>
+      <LoginLayout>
+      <Card width={'md'} height={'md'} alignItems={'center'}>
+        <CardBody width={'85%'}>
           <h1 className="font-semibold text-2xl p-5 justify-self-center italic">Time Tracking</h1>
           <Formik
             initialValues={{ email: '', password: '', rememberMe: false }}
@@ -58,6 +59,6 @@ export function LoginForm() {
           </Formik>
         </CardBody>
       </Card>
-    </section>
+      </LoginLayout>
   )
 }

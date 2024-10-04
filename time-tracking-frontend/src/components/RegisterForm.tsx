@@ -13,6 +13,7 @@ import { Formik, FormikProps, Form, Field, FieldProps } from 'formik'
 import { object, ref, string } from 'yup'
 import { registerUser } from '../services/User'
 import { useAlert } from '../hooks/Alert'
+import { LoginLayout } from './Layaout'
 
 export interface RegisterFormProps {
   name: string
@@ -38,11 +39,11 @@ export function RegisterForm() {
       .oneOf([ref('password'), undefined], 'Las contraseñas no coinciden')
       .required('La confirmación es requerida'),
   })
-  
+
   const { setAlert, AlertComponent } = useAlert()
 
   return (
-    <section>
+    <LoginLayout>
       <Card width={'3xl'} height={'fit-content'} alignItems={'center'}>
         <CardBody>
           <h1 className="font-semibold text-2xl p-5 justify-self-center italic">Time Tracking</h1>
@@ -54,7 +55,6 @@ export function RegisterForm() {
             }}
           >
             {(props: FormikProps<RegisterFormProps>) => (
-              
               <Form>
                 <main className="sm:flex gap-10">
                   <Flex flexDirection={'column'}>
@@ -124,6 +124,6 @@ export function RegisterForm() {
           </Formik>
         </CardBody>
       </Card>
-    </section>
+    </LoginLayout>
   )
 }

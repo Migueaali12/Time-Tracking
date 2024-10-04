@@ -1,14 +1,10 @@
-import { LoginLayout } from './components/Layaout'
-import { LoginForm } from './components/LoginForm'
-//import { RegisterForm } from './components/RegisterForm'
 
 function App() {
   return (
     <>
-      <LoginLayout>
-        <LoginForm />
-      </LoginLayout>
+     <h2>App</h2>
     </>
   )
 }
+
 export default App

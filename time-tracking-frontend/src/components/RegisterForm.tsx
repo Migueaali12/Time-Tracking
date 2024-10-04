@@ -1,9 +1,10 @@
-import { Button, Card, CardBody, CardFooter, FormControl, FormErrorMessage, FormLabel, Input } from '@chakra-ui/react'
+import { Alert, AlertIcon, Button, Card, CardBody, CardFooter, FormControl, FormErrorMessage, FormLabel, Input } from '@chakra-ui/react'
 import { Formik, FormikProps, Form, Field, FieldProps } from 'formik'
 import { object, ref, string } from 'yup'
 import { fetchRegisterUser } from '../services/User'
+import { useState } from 'react'
 
-interface RegisterFormProps {
+export interface RegisterFormProps {
   name: string
   lastName: string
   email: string
@@ -11,22 +12,28 @@ interface RegisterFormProps {
   passwordConfirm: string
 }
 
+export interface UserAlert {
+  hidden: boolean
+  type: 'success' | 'error' | undefined
+}
+
 export function RegisterForm() {
-    const validationSchema = object({
-        name: string().required('El primer nombre es requerido'),
-        lastName: string().required('El apellido es requerido'),
-        email: string().required('El email es requerido').email('Debe ser un email válido'),
-        password: string()
-          .required('La contraseña es requerida')
-          .min(8, 'La contraseña debe tener al menos 8 caracteres')
-          .matches(/[A-Z]/, 'Debe contener al menos una letra mayúscula')
-          .matches(/[a-z]/, 'Debe contener al menos una letra minúscula')
-          .matches(/\d/, 'Debe contener al menos un número'),
-          //.matches(/[@$!%*#?&]/, 'Debe contener al menos un carácter especial'),
-        passwordConfirm: string()
-          .oneOf([ref('password'), undefined], 'Las contraseñas no coinciden')
-          .required('La confirmación de la contraseña es requerida'),
-      });
+  const validationSchema = object({
+    name: string().required('El primer nombre es requerido'),
+    lastName: string().required('El apellido es requerido'),
+    email: string().required('El email es requerido').email('Debe ser un email válido'),
+    password: string()
+      .required('La contraseña es requerida')
+      .min(8, 'La contraseña debe tener al menos 8 caracteres')
+      .matches(/[A-Z]/, 'Debe contener al menos una letra mayúscula')
+      .matches(/[a-z]/, 'Debe contener al menos una letra minúscula')
+      .matches(/\d/, 'Debe contener al menos un número'),
+    //.matches(/[@$!%*#?&]/, 'Debe contener al menos un carácter especial'),
+    passwordConfirm: string()
+      .oneOf([ref('password'), undefined], 'Las contraseñas no coinciden')
+      .required('La confirmación de la contraseña es requerida'),
+  })
+  const [alert, setAlert] = useState<UserAlert>({hidden: true, type: undefined})
 
   return (
     <section>
@@ -37,8 +44,7 @@ export function RegisterForm() {
             initialValues={{ name: '', lastName: '', email: '', password: '', passwordConfirm: '' }}
             validationSchema={validationSchema}
             onSubmit={(values, actions) => {
-              fetchRegisterUser(values)
-              actions.resetForm()
+              fetchRegisterUser({values, actions, setAlert})
             }}
           >
             {(props: FormikProps<RegisterFormProps>) => (
@@ -93,6 +99,11 @@ export function RegisterForm() {
                   )}
                 </Field>
 
+                <Alert status={alert.type} hidden={alert.hidden} rounded={'md'} marginTop={5}>
+                  <AlertIcon />
+                  {alert.type === 'success' ? 'Usuario registrado exitosamente' : 'Error al registrar usuario'}
+                </Alert>
+
                 <CardFooter display={'flex'} flexDirection={'column'}>
                   <Button mt={4} colorScheme="blue" isLoading={props.isSubmitting} type="submit">
                     Registrate
@@ -106,4 +117,3 @@ export function RegisterForm() {
     </section>
   )
 }
-

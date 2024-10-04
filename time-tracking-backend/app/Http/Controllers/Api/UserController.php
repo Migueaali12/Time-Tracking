@@ -36,12 +36,12 @@ class UserController extends Controller
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|min:8|confirmed',
             ]);
-    
+
             $validationErrorResponse = $this->checkValidator($validateUser);
             if ($validationErrorResponse) {
                 return $validationErrorResponse;
             }
-    
+
             $user = User::create([
                 'name' => $request->name,
                 'lastname' => $request->lastname,
@@ -49,15 +49,13 @@ class UserController extends Controller
                 'password' => Hash::make($request->password),
                 'role' => 'USER',
             ]);
-    
+
             $data = [
                 'status' => 200,
                 'message' => 'Usuario registrado exitosamente',
-                'token' => $user->createToken('USER TOKEN')->plainTextToken
             ];
-    
-            return response()->json($data, 200);
 
+            return response()->json($data, 200);
         } catch (\Throwable $th) {
             return response()->json(['error' => $th->getMessage()], 500);
         }
@@ -68,33 +66,56 @@ class UserController extends Controller
     {
         try {
 
-            $validateUser = Validator::make($request->all(),
-            [
-                'email' => 'required|string|email|max:255',
-                'password' => 'required',
-            ]);
+            $validateUser = Validator::make(
+                $request->all(),
+                [
+                    'email' => 'required|string|email|max:255',
+                    'password' => 'required',
+                ]
+            );
 
             $validationErrorResponse = $this->checkValidator($validateUser);
             if ($validationErrorResponse) {
                 return $validationErrorResponse;
             }
-            
-            if(!Auth::attempt($request->only(['email', 'password']))) {
+
+            if (!Auth::attempt($request->only(['email', 'password']))) {
                 return response()->json(['message' => 'Credenciales inválidas'], 401);
             }
 
             $user = User::where('email', $request->email)->first();
-            
+
             $data = [
                 'status' => 200,
                 'message' => 'Inicio de sesión exitoso',
                 'token' => $user->createToken('USER TOKEN')->plainTextToken
             ];
-    
-            return response()->json($data, 200);
 
+            return response()->json($data, 200);
         } catch (\Throwable $th) {
             return response()->json(['error' => $th->getMessage()], 500);
+        }
+    }
+
+    public function logoutUser(Request $request)
+    {
+
+        try {
+
+            $request->user()->currentAccessToken()->delete();
+
+            $data = [
+                'status' => 200,
+                'message' => 'Cierre de sesión exitoso',
+            ];
+
+            return response()->json($data, 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 500,
+                'error' => 'Error al intentar cerrar la sesión',
+                'message' => $th->getMessage()
+            ], 500);
         }
     }
 }

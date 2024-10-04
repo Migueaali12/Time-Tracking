@@ -1,8 +1,18 @@
-import { Alert, AlertIcon, Button, Card, CardBody, CardFooter, FormControl, FormErrorMessage, FormLabel, Input } from '@chakra-ui/react'
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+} from '@chakra-ui/react'
 import { Formik, FormikProps, Form, Field, FieldProps } from 'formik'
 import { object, ref, string } from 'yup'
-import { fetchRegisterUser } from '../services/User'
-import { useState } from 'react'
+import { registerUser } from '../services/User'
+import { useAlert } from '../hooks/Alert'
 
 export interface RegisterFormProps {
   name: string
@@ -10,11 +20,6 @@ export interface RegisterFormProps {
   email: string
   password: string
   passwordConfirm: string
-}
-
-export interface UserAlert {
-  hidden: boolean
-  type: 'success' | 'error' | undefined
 }
 
 export function RegisterForm() {
@@ -31,78 +36,83 @@ export function RegisterForm() {
     //.matches(/[@$!%*#?&]/, 'Debe contener al menos un carácter especial'),
     passwordConfirm: string()
       .oneOf([ref('password'), undefined], 'Las contraseñas no coinciden')
-      .required('La confirmación de la contraseña es requerida'),
+      .required('La confirmación es requerida'),
   })
-  const [alert, setAlert] = useState<UserAlert>({hidden: true, type: undefined})
+  
+  const { setAlert, AlertComponent } = useAlert()
 
   return (
     <section>
-      <Card width={'sm'} height={'fit-content'} alignItems={'center'}>
+      <Card width={'3xl'} height={'fit-content'} alignItems={'center'}>
         <CardBody>
           <h1 className="font-semibold text-2xl p-5 justify-self-center italic">Time Tracking</h1>
           <Formik
             initialValues={{ name: '', lastName: '', email: '', password: '', passwordConfirm: '' }}
             validationSchema={validationSchema}
             onSubmit={(values, actions) => {
-              fetchRegisterUser({values, actions, setAlert})
+              registerUser({ values, actions, setAlert })
             }}
           >
             {(props: FormikProps<RegisterFormProps>) => (
+              
               <Form>
-                <Field name="name">
-                  {({ field, form }: FieldProps) => (
-                    <FormControl isInvalid={!!form.errors.name && !!form.touched.name}>
-                      <FormLabel>Nombre</FormLabel>
-                      <Input {...field} placeholder="Tu nombre" />
-                      <FormErrorMessage>{form.errors.name?.toString()}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
+                <main className="sm:flex gap-10">
+                  <Flex flexDirection={'column'}>
+                    <Field name="name">
+                      {({ field, form }: FieldProps) => (
+                        <FormControl isInvalid={!!form.errors.name && !!form.touched.name}>
+                          <FormLabel>Nombre</FormLabel>
+                          <Input {...field} placeholder="Tu nombre" />
+                          <FormErrorMessage>{form.errors.name?.toString()}</FormErrorMessage>
+                        </FormControl>
+                      )}
+                    </Field>
 
-                <Field name="lastName">
-                  {({ field, form }: FieldProps) => (
-                    <FormControl isInvalid={!!form.errors.lastName && !!form.touched.lastName}>
-                      <FormLabel>Apellido</FormLabel>
-                      <Input {...field} placeholder="Tu apellido" />
-                      <FormErrorMessage>{form.errors.lastName?.toString()}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
+                    <Field name="lastName">
+                      {({ field, form }: FieldProps) => (
+                        <FormControl isInvalid={!!form.errors.lastName && !!form.touched.lastName}>
+                          <FormLabel>Apellido</FormLabel>
+                          <Input {...field} placeholder="Tu apellido" />
+                          <FormErrorMessage>{form.errors.lastName?.toString()}</FormErrorMessage>
+                        </FormControl>
+                      )}
+                    </Field>
 
-                <Field name="email">
-                  {({ field, form }: FieldProps) => (
-                    <FormControl isInvalid={!!form.errors.email && !!form.touched.email}>
-                      <FormLabel>Email</FormLabel>
-                      <Input {...field} placeholder="correo electrónico" />
-                      <FormErrorMessage>{form.errors.email?.toString()}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
+                    <Field name="email">
+                      {({ field, form }: FieldProps) => (
+                        <FormControl isInvalid={!!form.errors.email && !!form.touched.email}>
+                          <FormLabel>Email</FormLabel>
+                          <Input {...field} placeholder="correo electrónico" />
+                          <FormErrorMessage>{form.errors.email?.toString()}</FormErrorMessage>
+                        </FormControl>
+                      )}
+                    </Field>
+                  </Flex>
 
-                <Field name="password">
-                  {({ field, form }: FieldProps) => (
-                    <FormControl isInvalid={!!form.errors.password && !!form.touched.password} mt={4}>
-                      <FormLabel>Contraseña</FormLabel>
-                      <Input {...field} type="password" placeholder="contraseña" />
-                      <FormErrorMessage>{form.errors.password?.toString()}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
+                  <Flex flexDirection={'column'} justifyContent={'center'}>
+                    <Field name="password">
+                      {({ field, form }: FieldProps) => (
+                        <FormControl isInvalid={!!form.errors.password && !!form.touched.password} mt={4}>
+                          <FormLabel>Contraseña</FormLabel>
+                          <Input {...field} type="password" placeholder="contraseña" />
+                          <FormErrorMessage>{form.errors.password?.toString()}</FormErrorMessage>
+                        </FormControl>
+                      )}
+                    </Field>
 
-                <Field name="passwordConfirm">
-                  {({ field, form }: FieldProps) => (
-                    <FormControl isInvalid={!!form.errors.passwordConfirm && !!form.touched.passwordConfirm} mt={4}>
-                      <FormLabel>Confirma tu contraseña</FormLabel>
-                      <Input {...field} type="password" placeholder="confirma tu contraseña" />
-                      <FormErrorMessage>{form.errors.passwordConfirm?.toString()}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
+                    <Field name="passwordConfirm">
+                      {({ field, form }: FieldProps) => (
+                        <FormControl isInvalid={!!form.errors.passwordConfirm && !!form.touched.passwordConfirm} mt={4}>
+                          <FormLabel>Confirma tu contraseña</FormLabel>
+                          <Input {...field} type="password" placeholder="confirma tu contraseña" />
+                          <FormErrorMessage>{form.errors.passwordConfirm?.toString()}</FormErrorMessage>
+                        </FormControl>
+                      )}
+                    </Field>
+                  </Flex>
+                </main>
 
-                <Alert status={alert.type} hidden={alert.hidden} rounded={'md'} marginTop={5}>
-                  <AlertIcon />
-                  {alert.type === 'success' ? 'Usuario registrado exitosamente' : 'Error al registrar usuario'}
-                </Alert>
+                {AlertComponent}
 
                 <CardFooter display={'flex'} flexDirection={'column'}>
                   <Button mt={4} colorScheme="blue" isLoading={props.isSubmitting} type="submit">

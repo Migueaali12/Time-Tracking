@@ -1,17 +1,8 @@
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  Checkbox,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-} from '@chakra-ui/react'
+import { Button, Card, CardBody, CardFooter, FormControl, FormErrorMessage, FormLabel, Input } from '@chakra-ui/react'
 import { Formik, FormikProps, Form, Field, FieldProps } from 'formik'
 import { object, string } from 'yup'
-
+import { useAlert } from '../hooks/Alert'
+import { loginUser } from '../services/User'
 
 export function LoginForm() {
   const validationSchema = object({
@@ -19,21 +10,22 @@ export function LoginForm() {
     password: string().required('La contraseña es requerida'),
   })
 
+  const { setAlert, AlertComponent } = useAlert()
+
   return (
     <section>
       <Card width={'sm'} height={'md'} alignItems={'center'}>
         <CardBody>
-          <h1 className="font-semibold text-2xl p-5 justify-self-center">Time Tracking</h1>
+          <h1 className="font-semibold text-2xl p-5 justify-self-center italic">Time Tracking</h1>
           <Formik
             initialValues={{ email: '', password: '', rememberMe: false }}
             validationSchema={validationSchema}
             onSubmit={(values, actions) => {
-              console.log(values, actions)
+              loginUser({ values, actions, setAlert })
             }}
           >
             {(props: FormikProps<{ email: string; password: string; rememberMe: boolean }>) => (
               <Form>
-                {/* email */}
                 <Field name="email">
                   {({ field, form }: FieldProps) => (
                     <FormControl isInvalid={!!form.errors.email && !!form.touched.email}>
@@ -44,7 +36,6 @@ export function LoginForm() {
                   )}
                 </Field>
 
-                {/* Password */}
                 <Field name="password">
                   {({ field, form }: FieldProps) => (
                     <FormControl isInvalid={!!form.errors.password && !!form.touched.password} mt={4}>
@@ -55,16 +46,9 @@ export function LoginForm() {
                   )}
                 </Field>
 
-                <Field name="rememberMe" type="checkbox">
-                  {({ field }: FieldProps) => (
-                    <Checkbox {...field} mt={4}>
-                      Recuérdame
-                    </Checkbox>
-                  )}
-                </Field>
+                {AlertComponent}
 
                 <CardFooter display={'flex'} flexDirection={'column'}>
-                  {/* Submit Button */}
                   <Button mt={4} colorScheme="blue" isLoading={props.isSubmitting} type="submit">
                     Iniciar sesión
                   </Button>

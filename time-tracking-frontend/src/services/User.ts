@@ -1,6 +1,7 @@
 
 import { FormikHelpers } from 'formik'
 import { UserAlertProps } from '../hooks/Alert'
+import { UserToast } from '../hooks/Toast'
 
 interface RegisterProps {
   values: {
@@ -30,7 +31,7 @@ interface LoginProps {
     password: string;
     rememberMe: boolean;
 }>
-  setAlert: React.Dispatch<React.SetStateAction<UserAlertProps>> 
+  setAlert: React.Dispatch<React.SetStateAction<UserAlertProps>>
 }
 
 const URL_API = 'http://127.0.0.1:8000/api/user'
@@ -66,7 +67,7 @@ export async function registerUser({ values, actions, setAlert }: RegisterProps)
 
 export async function loginUser({ values, actions, setAlert }: LoginProps) {
   try {
-    const res = await fetch(`${URL_API}/login`, {
+    const res = await fetch(`${URL_API}/loginin`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -87,8 +88,10 @@ export async function loginUser({ values, actions, setAlert }: LoginProps) {
       setAlert({ hidden: false, type: 'error', content: data.message || 'Error al inciar sesión' })
     }
   } catch {
+    //UserToast()
     setAlert({ hidden: false, type: 'error', content: 'Error de conexión, intente más tarde' })
   }
   actions.setSubmitting(false)
 }
+
 

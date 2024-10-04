@@ -1,38 +1,18 @@
-import { Button, useToast } from '@chakra-ui/react'
+import { useToast } from '@chakra-ui/react'
 
-interface UserToastProps {
-  buttonText: string
-  fetchFunction: () => Promise<void>
-  successTitle: string
-  successMessage: string
-  errorTitle: string
-  errorMessage: string
-  loadingTitle: string
-  loadingMessage: string
-  
-}
-export function useUserToast({
-  buttonText,
-  fetchFunction,
-  successTitle,
-  successMessage,
-  errorTitle,
-  errorMessage,
-  loadingTitle,
-  loadingMessage,
-}: UserToastProps) {
+// interface ItoastProps {
+//   title: string
+//   description: string
+//   status: 'success' | 'error' | 'info' | 'warning' | 'loading' | undefined
+// }
+
+export function UserToast() {
   const toast = useToast()
-  return (
-    <Button
-      onClick={() => {
-        toast.promise(fetchFunction(), {
-          success: { title: successTitle, description: successMessage },
-          error: { title: errorTitle, description: errorMessage },
-          loading: { title: loadingTitle, description: loadingMessage },
-        })
-      }}
-    >
-      {buttonText}
-    </Button>
-  )
-}
+    toast({
+      title: 'Account created.',
+      description: "We've created your account for you.",
+      status: 'success',
+      duration: 9000,
+      isClosable: true,
+    })
+  }

@@ -8,11 +8,11 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  useToast,
 } from '@chakra-ui/react'
 import { Formik, FormikProps, Form, Field, FieldProps } from 'formik'
 import { object, ref, string } from 'yup'
 import { registerUser } from '../services/User'
-import { useAlert } from '../hooks/Alert'
 import { LoginLayout } from './Layaout'
 
 export interface RegisterFormProps {
@@ -40,7 +40,7 @@ export function RegisterForm() {
       .required('La confirmación es requerida'),
   })
 
-  const { setAlert, AlertComponent } = useAlert()
+  const toast = useToast()
 
   return (
     <LoginLayout>
@@ -51,7 +51,7 @@ export function RegisterForm() {
             initialValues={{ name: '', lastName: '', email: '', password: '', passwordConfirm: '' }}
             validationSchema={validationSchema}
             onSubmit={(values, actions) => {
-              registerUser({ values, actions, setAlert })
+              registerUser({ values, actions, toast })
             }}
           >
             {(props: FormikProps<RegisterFormProps>) => (
@@ -111,8 +111,6 @@ export function RegisterForm() {
                     </Field>
                   </Flex>
                 </main>
-
-                {AlertComponent}
 
                 <CardFooter display={'flex'} flexDirection={'column'}>
                   <Button mt={4} colorScheme="blue" isLoading={props.isSubmitting} type="submit">

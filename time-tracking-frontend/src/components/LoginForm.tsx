@@ -1,9 +1,18 @@
-import { Button, Card, CardBody, CardFooter, FormControl, FormErrorMessage, FormLabel, Input } from '@chakra-ui/react'
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  useToast,
+} from '@chakra-ui/react'
 import { Formik, FormikProps, Form, Field, FieldProps } from 'formik'
 import { object, string } from 'yup'
-import { useAlert } from '../hooks/Alert'
-import { loginUser } from '../services/User'
 import { LoginLayout } from './Layaout'
+import { loginUser } from '../services/User'
 
 export function LoginForm() {
   const validationSchema = object({
@@ -11,10 +20,10 @@ export function LoginForm() {
     password: string().required('La contraseña es requerida'),
   })
 
-  const { setAlert, AlertComponent } = useAlert()
+  const toast = useToast()
 
   return (
-      <LoginLayout>
+    <LoginLayout>
       <Card width={'md'} height={'md'} alignItems={'center'}>
         <CardBody width={'85%'}>
           <h1 className="font-semibold text-2xl p-5 justify-self-center italic">Time Tracking</h1>
@@ -22,7 +31,7 @@ export function LoginForm() {
             initialValues={{ email: '', password: '', rememberMe: false }}
             validationSchema={validationSchema}
             onSubmit={(values, actions) => {
-              loginUser({ values, actions, setAlert })
+              loginUser({ values, actions, toast })
             }}
           >
             {(props: FormikProps<{ email: string; password: string; rememberMe: boolean }>) => (
@@ -47,8 +56,6 @@ export function LoginForm() {
                   )}
                 </Field>
 
-                {AlertComponent}
-
                 <CardFooter display={'flex'} flexDirection={'column'}>
                   <Button mt={4} colorScheme="blue" isLoading={props.isSubmitting} type="submit">
                     Iniciar sesión
@@ -59,6 +66,6 @@ export function LoginForm() {
           </Formik>
         </CardBody>
       </Card>
-      </LoginLayout>
+    </LoginLayout>
   )
 }

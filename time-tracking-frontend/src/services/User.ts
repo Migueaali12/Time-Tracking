@@ -1,7 +1,5 @@
-
 import { FormikHelpers } from 'formik'
-import { UserAlertProps } from '../hooks/Alert'
-import { UserToast } from '../hooks/Toast'
+import { UseToastOptions, ToastId } from '@chakra-ui/react'
 
 interface RegisterProps {
   values: {
@@ -18,7 +16,9 @@ interface RegisterProps {
     password: string
     passwordConfirm: string
   }>
-  setAlert: React.Dispatch<React.SetStateAction<UserAlertProps>>
+  toast: {
+    (options?: UseToastOptions): ToastId
+  }
 }
 
 interface LoginProps {
@@ -27,16 +27,18 @@ interface LoginProps {
     password: string
   }
   actions: FormikHelpers<{
-    email: string;
-    password: string;
-    rememberMe: boolean;
-}>
-  setAlert: React.Dispatch<React.SetStateAction<UserAlertProps>>
+    email: string
+    password: string
+    rememberMe: boolean
+  }>
+  toast: {
+    (options?: UseToastOptions): ToastId
+  }
 }
 
 const URL_API = 'http://127.0.0.1:8000/api/user'
 
-export async function registerUser({ values, actions, setAlert }: RegisterProps) {
+export async function registerUser({ values, actions, toast }: RegisterProps) {
   try {
     const res = await fetch(`${URL_API}/register`, {
       method: 'POST',
@@ -54,18 +56,39 @@ export async function registerUser({ values, actions, setAlert }: RegisterProps)
     const data = await res.json()
 
     if (res.ok) {
-      setAlert({ hidden: false, type: 'success', content: data.message })
+      toast({
+        title: 'Usuario registrado',
+        description: data.message,
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top'
+      })
       actions.resetForm()
     } else {
-      setAlert({ hidden: false, type: 'error', content: data.message || 'Error al registrar' })
+      toast({
+        title: 'Error al registar usuario',
+        description: data.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top'
+      })
     }
   } catch {
-    setAlert({ hidden: false, type: 'error', content: 'Error de conexión, intente más tarde' })
+    toast({
+      title: 'Error al registar usuario',
+      description: 'Error de conexión, intente más tarde',
+      status: 'error',
+      duration: 5000,
+      isClosable: true,
+      position: 'top'
+    })
   }
   actions.setSubmitting(false)
 }
 
-export async function loginUser({ values, actions, setAlert }: LoginProps) {
+export async function loginUser({ values, actions, toast }: LoginProps) {
   try {
     const res = await fetch(`${URL_API}/loginin`, {
       method: 'POST',
@@ -80,18 +103,36 @@ export async function loginUser({ values, actions, setAlert }: LoginProps) {
 
     const data = await res.json()
 
-    if(res.ok) {
+    if (res.ok) {
       localStorage.setItem('authToken', data.token)
-      setAlert({ hidden: false, type: 'success', content: data.message })
+      toast({
+        title: 'Usuario autenticado',
+        description: data.message,
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top'
+      })
       actions.resetForm()
     } else {
-      setAlert({ hidden: false, type: 'error', content: data.message || 'Error al inciar sesión' })
+      toast({
+        title: 'Error al inciar sesión',
+        description: data.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top'
+      })
     }
   } catch {
-    //UserToast()
-    setAlert({ hidden: false, type: 'error', content: 'Error de conexión, intente más tarde' })
+    toast({
+      title: 'Error al inciar sesión',
+      description: 'Error de conexión, intente más tarde',
+      status: 'error',
+      duration: 5000,
+      isClosable: true,
+      position: 'top'
+    })
   }
   actions.setSubmitting(false)
 }
-
-

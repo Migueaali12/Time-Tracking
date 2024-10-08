@@ -86,6 +86,7 @@ class UserController extends Controller
             $user = User::where('email', $request->email)->first();
 
             $data = [
+                'role' => $user->role,
                 'status' => 200,
                 'message' => 'Inicio de sesión exitoso',
                 'token' => $user->createToken('USER TOKEN')->plainTextToken
@@ -94,6 +95,49 @@ class UserController extends Controller
             return response()->json($data, 200);
         } catch (\Throwable $th) {
             return response()->json(['error' => $th->getMessage()], 500);
+        }
+    }
+
+    public function validateToken(Request $request)
+    {
+        try {
+
+            $token = $request->bearerToken();
+
+            if (!$token) {
+                $data = [
+                    'error' => 'Token no proporcionado',
+                    'status' => 401
+                ];
+
+                return response()->json($data, 401);
+            }
+
+            $user = \Laravel\Sanctum\PersonalAccessToken::findToken($token);
+
+            if (!$user) {
+                $data = [
+                    'error' => 'Token invalido',
+                    'status' => 401
+                ];
+
+                return response()->json($data, 401);
+            }
+
+            $data = [
+                'status' => 200,
+                'message' => 'Token válido',
+                'user' => $user->tokenable
+            ];
+
+            return response()->json($data, 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 500,
+                'error' => 'Error al validar el token',
+                'message' => $th->getMessage()
+            ], 500);
         }
     }
 

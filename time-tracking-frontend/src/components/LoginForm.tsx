@@ -13,6 +13,7 @@ import { Formik, FormikProps, Form, Field, FieldProps } from 'formik'
 import { object, string } from 'yup'
 import { LoginLayout } from './Layaout'
 import { loginUser } from '../services/User'
+import { useNavigate } from 'react-router-dom'
 
 export function LoginForm() {
   const validationSchema = object({
@@ -21,6 +22,7 @@ export function LoginForm() {
   })
 
   const toast = useToast()
+  const navigate = useNavigate()
 
   return (
     <LoginLayout>
@@ -31,7 +33,7 @@ export function LoginForm() {
             initialValues={{ email: '', password: '', rememberMe: false }}
             validationSchema={validationSchema}
             onSubmit={(values, actions) => {
-              loginUser({ values, actions, toast })
+              loginUser({ values, actions, toast, navigate })
             }}
           >
             {(props: FormikProps<{ email: string; password: string; rememberMe: boolean }>) => (

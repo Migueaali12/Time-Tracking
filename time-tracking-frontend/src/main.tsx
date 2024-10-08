@@ -6,6 +6,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { RegisterForm } from './components/RegisterForm.tsx'
 import { LoginForm } from './components/LoginForm.tsx'
 import { Homepage } from './views/Homepage.tsx'
+import { AdminView } from './views/Admin.tsx'
+import { UserView } from './views/User.tsx'
+import { ProtectedRoute } from './validators/ProtectedRoute.tsx'
+import { UnauthorizedView } from './views/Unauthorized.tsx'
 
 const router = createBrowserRouter([
   {
@@ -20,6 +24,26 @@ const router = createBrowserRouter([
     path: '/login',
     element: <LoginForm />,
   },
+  {
+    path: '/admin-dashboard',
+    element: (
+      <ProtectedRoute roles={['ADMIN']}>
+        <AdminView />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/user-dashboard',
+    element: (
+      <ProtectedRoute roles={['USER', 'ADMIN']}>
+        <UserView />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/unauthorized',
+    element: <UnauthorizedView />
+  }
 ])
 
 createRoot(document.getElementById('root')!).render(

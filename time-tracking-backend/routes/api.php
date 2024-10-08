@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\UserController;
 Route::prefix('user')->group(function () {
     Route::post('/register', [UserController::class, 'registerUser']);
     Route::post('/login', [UserController::class, 'loginUser']);
+    Route::get('/validate-token', [UserController::class, 'validateToken']);
     Route::middleware('auth:sanctum')->post('/logout', [UserController::class, 'logoutUser']);
 
 });

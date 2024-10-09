@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { Formik, FormikProps, Form, Field, FieldProps } from 'formik'
 import { object, string } from 'yup'
-import { LoginLayout } from './Layaout'
+import { LoginLayout } from '../layouts/LoginLayaout'
 import { loginUser } from '../services/User'
 import { useNavigate } from 'react-router-dom'
 

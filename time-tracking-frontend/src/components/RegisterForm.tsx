@@ -13,7 +13,7 @@ import {
 import { Formik, FormikProps, Form, Field, FieldProps } from 'formik'
 import { object, ref, string } from 'yup'
 import { registerUser } from '../services/User'
-import { LoginLayout } from './Layaout'
+import { LoginLayout } from '../layouts/LoginLayaout'
 
 export interface RegisterFormProps {
   name: string

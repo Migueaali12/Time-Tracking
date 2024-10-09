@@ -1,5 +1,5 @@
 import { Button } from '@chakra-ui/react'
-import { LoginLayout } from '../components/Layaout'
+import { LoginLayout } from '../layouts/LoginLayaout'
 import { Link } from 'react-router-dom'
 
 export function Homepage() {

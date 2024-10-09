@@ -1,3 +1,11 @@
+import { Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/react'
+
 export function UnauthorizedView() {
-    return <h1>ACCESO NO AUTOIRZADO</h1>
+  return (
+    <Alert status="error" h={'20'} fontSize={'xl'}>
+      <AlertIcon />
+      <AlertTitle>Acceso no autorizado!</AlertTitle>
+      <AlertDescription>Para acceder a esta vista inicia sesión primero</AlertDescription>
+    </Alert>
+  )
 }

@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\employeeController;
+use App\Http\Controllers\EmployeeController;
 
 Route::prefix('user')->group(function () {
     Route::post('/register', [UserController::class, 'registerUser']);
@@ -13,7 +13,7 @@ Route::prefix('user')->group(function () {
 });
 
 Route::prefix('employee')->group(function () {
-    Route::get('/', [employeeController::class, 'getEmployee']);
+    Route::get('/', [EmployeeController::class, 'getEmployee']);
 });
 
 // Route::middleware('auth:sanctum')->group(function () {

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 
-class employeeController extends Controller
+class EmployeeController extends Controller
 {
     public function getEmployee()
     {
@@ -13,7 +13,7 @@ class employeeController extends Controller
 
         if (!$employees) {
             $data = [
-                'message' => 'No employees found',
+                'message' => 'No se encontraron empleados',
                 'status' => 404
             ];
             return response()->json($data, 404);

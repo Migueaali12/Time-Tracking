@@ -2,6 +2,7 @@ import { FormikHelpers } from 'formik'
 import { UseToastOptions, ToastId } from '@chakra-ui/react'
 import CryptoJS from 'crypto-js'
 import { NavigateFunction } from 'react-router-dom'
+import { getAuthToken } from '../functions/Token'
 
 interface RegisterProps {
   values: {
@@ -125,7 +126,6 @@ export async function loginUser({ values, actions, toast, navigate }: LoginProps
       } else {
         navigate('/user-dashboard')
       }
-      
     } else {
       toast({
         title: 'Error al inciar sesión',
@@ -147,4 +147,46 @@ export async function loginUser({ values, actions, toast, navigate }: LoginProps
     })
   }
   actions.setSubmitting(false)
+}
+
+export async function logoutUser({
+  toast,
+  navigate,
+}: {
+  toast: (options?: UseToastOptions) => ToastId
+  navigate: NavigateFunction
+}) {
+  try {
+    const res = await fetch(`${URL_API}/logout`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    })
+
+    const data = await res.json()
+
+    if (data.status === 200) {
+      localStorage.removeItem('authToken')
+      toast({
+        title: 'Cierre de Sesión',
+        description: data.message,
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      })
+      navigate('/login')
+    }
+  } catch {
+    toast({
+      title: 'Error al cerrar sesión',
+      description: 'Error de conexión, intente más tarde',
+      status: 'error',
+      duration: 5000,
+      isClosable: true,
+      position: 'top',
+    })
+  }
 }

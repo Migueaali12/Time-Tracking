@@ -132,7 +132,6 @@ class UserController extends Controller
             ];
 
             return response()->json($data, 200);
-
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => 500,
@@ -147,7 +146,7 @@ class UserController extends Controller
 
         try {
 
-            $request->user()->currentAccessToken()->delete();
+            $request->user()->tokens()->delete();
 
             $data = [
                 'status' => 200,

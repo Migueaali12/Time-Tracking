@@ -5,7 +5,14 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    fontFamily: {
+      'inter': ['Inter', 'system-ui']
+    },
+    extend: {
+      colors: {
+        'hwhite': ['#f3f3f3'],
+      },
+    },
   },
   plugins: [],
 }

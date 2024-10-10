@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import CryptoJS from 'crypto-js'
 import { Alert, AlertIcon } from '@chakra-ui/react'
+import { getAuthToken } from '../functions/Token'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
@@ -18,13 +18,11 @@ export function ProtectedRoute({ children, roles }: ProtectedRouteProps) {
 
       if (encryptedToken) {
         try {
-          const bytes = CryptoJS.AES.decrypt(encryptedToken, import.meta.env.VITE_REACT_APP_KEY)
-          const decryptedToken = bytes.toString(CryptoJS.enc.Utf8)
 
           const res = await fetch(`http://127.0.0.1:8000/api/user/validate-token`, {
             method: 'GET',
             headers: {
-              Authorization: `Bearer ${decryptedToken}`,
+              Authorization: `Bearer ${getAuthToken()}`,
             },
           })
 

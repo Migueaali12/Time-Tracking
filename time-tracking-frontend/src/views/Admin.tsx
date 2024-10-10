@@ -8,9 +8,8 @@ import { useEffect, useState } from 'react'
 
 export function AdminView() {
   const { drawerComponent, onOpen } = useAdminDrawer()
-
   const [EmployeeList, setEmployeeList] = useState<Array<Employee> | []>([])
-
+  
   useEffect(() => {
     getEmployees().then((employees) => {
       if (employees !== undefined) {
@@ -37,8 +36,8 @@ export function AdminView() {
     <DashboardLayout>
       <Box bg="#3182ce" w="100%" p={4} display={'flex'} justifyContent={'space-between'}>
         <h2 className="text-xl font-bold text-white">Admin Dashboard</h2>
-        <Button size={'sm'} onClick={onOpen}>
-          <IoMenu size={'25'} />
+        <Button size={'sm'} onClick={onOpen} rounded={'full'}>
+          <IoMenu size={'20'} />
         </Button>
       </Box>
 

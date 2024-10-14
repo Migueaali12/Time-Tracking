@@ -5,11 +5,23 @@ import { DashboardLayout } from '../layouts/DashboardLayout'
 import { getEmployees } from '../services/Employee'
 import { Employee, EmployeeResponse } from '../types'
 import { useEffect, useState } from 'react'
+import { FaUserEdit } from 'react-icons/fa'
+import { MdDeleteForever } from 'react-icons/md'
+import { AdminModal } from '../components/AdminModal'
 
 export function AdminView() {
   const { drawerComponent, onOpen } = useAdminDrawer()
   const [EmployeeList, setEmployeeList] = useState<Array<Employee> | []>([])
-  
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const openModal = () => {
+    setIsModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+  }
+
   useEffect(() => {
     getEmployees().then((employees) => {
       if (employees !== undefined) {
@@ -17,16 +29,16 @@ export function AdminView() {
           id: employee.id,
           status: employee.status,
           name: employee.name,
-          lastName: employee.lastname, 
+          lastName: employee.lastname,
           dni: employee.dni,
           phone: employee.phone,
           email: employee.email,
-          faceImagePath: employee.face_image_path, 
+          faceImagePath: employee.face_image_path,
           faceEncoding: employee.face_encoding,
           positionId: employee.position_id,
           createdAt: employee.created_at,
           updatedAt: employee.updated_at,
-        }));
+        }))
         setEmployeeList(mappedEmployees)
       }
     })
@@ -59,6 +71,8 @@ export function AdminView() {
                 <Th>Position Id</Th>
                 <Th>Created At</Th>
                 <Th>Updated At</Th>
+                <Th>Editar</Th>
+                <Th>Eliminar</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -76,6 +90,23 @@ export function AdminView() {
                   <Td>{employee.position}</Td>
                   <Td>{new Date(employee.createdAt).toLocaleDateString()}</Td>
                   <Td>{new Date(employee.updatedAt).toLocaleDateString()}</Td>
+                  <Td>
+                    <Button
+                      colorScheme="blue"
+                      size={'sm'}
+                      rounded={'full'}
+                      onClick={() => {
+                        openModal()
+                      }}
+                    >
+                      <FaUserEdit />
+                    </Button>
+                  </Td>
+                  <Td>
+                    <Button colorScheme="blue" size={'sm'} rounded={'full'}>
+                      <MdDeleteForever />
+                    </Button>
+                  </Td>
                 </Tr>
               ))}
             </Tbody>
@@ -90,6 +121,7 @@ export function AdminView() {
         </TableContainer>
       </Card>
       {drawerComponent}
+      {isModalOpen && <AdminModal isOpen={isModalOpen} onClose={closeModal} />}
     </DashboardLayout>
   )
 }

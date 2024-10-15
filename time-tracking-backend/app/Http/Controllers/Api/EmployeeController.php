@@ -22,10 +22,11 @@ class EmployeeController extends Controller
         return null;
     }
 
-    public function defaultMessage($message, $status)
+    public function defaultMessage($message, $employees, $status)
     {
         $data = [
             'message' => $message,
+            'employees' => $employees,
             'status' => $status,
         ];
 
@@ -37,19 +38,12 @@ class EmployeeController extends Controller
         $employees = Employee::all();
 
         if (!$employees) {
-            $data = [
-                'message' => 'No se encontraron empleados',
-                'status' => 404
-            ];
-            return response()->json($data, 404);
+            $response = $this->defaultMessage($message = 'No se encontraron empleados', $employees, $status = 404);
+            return response()->json($response, 404);
         }
 
-        $data = [
-            'employees' => $employees,
-            'status' => 200
-        ];
-
-        return response()->json($data, 200);
+        $response = $this->defaultMessage($message = '', $employees, $status = 200);
+        return response()->json($response, 200);
     }
 
     public function addEmployee(Request $request)
@@ -85,18 +79,17 @@ class EmployeeController extends Controller
         ]);
 
         if (!$employee) {
-            $data = [
-                'message' => 'Error al crear el empleado',
-                'status' => 500
-            ];
-            return response()->json($data, 500);
+            $response = $this->defaultMessage($message = 'Error al crear empleado', $employee, $status = 200);
+            return response()->json($response, 500);
         }
 
-        $response = $this->defaultMessage($message = 'Empleado creado con exito', $status = 200);
+        $response = $this->defaultMessage($message = 'Empleado creado con exito', $employee, $status = 200);
         return response()->json($response, 200);
     }
 
-    public function deleteEmployee(Request $request) {
+    public function deleteEmployee(Request $request)
+    {
+
         $validator = Validator::make($request->all(), [
             'employee_id' => 'required|integer'
         ]);
@@ -109,13 +102,73 @@ class EmployeeController extends Controller
         $employee = Employee::find($request->employee_id);
 
         if (!$employee) {
-            $response = $this->defaultMessage($message = 'Empleado no encontrado', $status = 404);
+            $response = $this->defaultMessage($message = 'Empleado no encontrado', $employee, $status = 404);
             return response()->json($response, 404);
         }
 
         $employee->delete();
 
-        $response = $this->defaultMessage($message = 'Empleado eliminado con éxito', $status = 200);
+        $response = $this->defaultMessage($message = 'Empleado eliminado con éxito', $employee, $status = 200);
+        return response()->json($response, 200);
+    }
+
+    public function updateEmployee(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|integer'
+        ]);
+
+        $validatorResponse = $this->checkValidator($validator);
+        if ($validatorResponse) {
+            return $validatorResponse;
+        }
+
+        $employee = Employee::find($request->id);
+        if (!$employee) {
+            $response = $this->defaultMessage('Empleado no encontrado', null, 404);
+            return response()->json($response, 404);
+        }
+
+
+        $validator = Validator::make($request->all(), [
+            'status' => 'nullable|in:ACTIVE,INACTIVE',
+            'name' => 'nullable|string',
+            'lastname' => 'nullable|string',
+            'dni' => 'nullable|max:15',
+            'phone' => 'nullable|max:15',
+            'email' => 'nullable|email',
+            'face_image_path' => 'nullable|string',
+            'face_encoding' => 'nullable|string',
+            'position_id' => 'nullable|integer|in:1,2'
+        ]);
+
+        $validatorResponse = $this->checkValidator($validator);
+        if ($validatorResponse) {
+            return $validatorResponse;
+        }
+
+        $employee = Employee::find($request->id);
+
+        if (!$employee) {
+            $response = $this->defaultMessage($message = 'Empleado no encontrado', $employee, $status = 404);
+            return response()->json($response, 404);
+        }
+
+        $employee->fill($request->only([
+            'status',
+            'name',
+            'lastname',
+            'dni',
+            'phone',
+            'email',
+            'face_image_path',
+            'face_encoding',
+            'position_id'
+        ]));
+
+        $employee->save();
+
+        $response = $this->defaultMessage($message = 'Empleado actualizado con éxito', $employee, $status = 200);
         return response()->json($response, 200);
     }
 }

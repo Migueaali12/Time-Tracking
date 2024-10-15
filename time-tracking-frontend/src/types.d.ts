@@ -8,6 +8,7 @@ export interface Employee {
   email: string
   faceImagePath: string
   faceEncoding: string
+  positionId: number
   position: string
   createdAt: Date
   updatedAt: Date

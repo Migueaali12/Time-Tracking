@@ -2,16 +2,14 @@ import { Box, Button, Card, Table, TableContainer, Tbody, Td, Tfoot, Th, Thead, 
 import { IoMenu } from 'react-icons/io5'
 import { useAdminDrawer } from '../components/AdminDrawer'
 import { DashboardLayout } from '../layouts/DashboardLayout'
-import { getEmployees } from '../services/Employee'
-import { Employee, EmployeeResponse } from '../types'
 import { useEffect, useState } from 'react'
 import { FaUserEdit } from 'react-icons/fa'
 import { MdDeleteForever } from 'react-icons/md'
 import { AdminModal } from '../components/AdminModal'
+import { useEmployee } from '../hooks/useEmployee'
 
 export function AdminView() {
   const { drawerComponent, onOpen } = useAdminDrawer()
-  const [EmployeeList, setEmployeeList] = useState<Array<Employee> | []>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const openModal = () => {
@@ -22,26 +20,10 @@ export function AdminView() {
     setIsModalOpen(false)
   }
 
+  const { employees, setEmployees } = useEmployee()
+
   useEffect(() => {
-    getEmployees().then((employees) => {
-      if (employees !== undefined) {
-        const mappedEmployees = employees.map((employee: EmployeeResponse) => ({
-          id: employee.id,
-          status: employee.status,
-          name: employee.name,
-          lastName: employee.lastname,
-          dni: employee.dni,
-          phone: employee.phone,
-          email: employee.email,
-          faceImagePath: employee.face_image_path,
-          faceEncoding: employee.face_encoding,
-          positionId: employee.position_id,
-          createdAt: employee.created_at,
-          updatedAt: employee.updated_at,
-        }))
-        setEmployeeList(mappedEmployees)
-      }
-    })
+    setEmployees()
   }, [])
 
   return (
@@ -76,7 +58,7 @@ export function AdminView() {
               </Tr>
             </Thead>
             <Tbody>
-              {EmployeeList.map((employee) => (
+              {employees.map((employee) => (
                 <Tr key={employee.id}>
                   <Td>{employee.id}</Td>
                   <Td>{employee.status}</Td>

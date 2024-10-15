@@ -10,6 +10,7 @@ import { AdminView } from './views/Admin.tsx'
 import { UserView } from './views/User.tsx'
 import { ProtectedRoute } from './validators/ProtectedRoute.tsx'
 import { UnauthorizedView } from './views/Unauthorized.tsx'
+import { EmployeeProvider } from './contexts/employee.tsx'
 
 const router = createBrowserRouter([
   {
@@ -27,9 +28,11 @@ const router = createBrowserRouter([
   {
     path: '/admin-dashboard',
     element: (
-      <ProtectedRoute roles={['ADMIN']}>
-        <AdminView />
-      </ProtectedRoute>
+      <EmployeeProvider>
+        <ProtectedRoute roles={['ADMIN']}>
+          <AdminView />
+        </ProtectedRoute>
+      </EmployeeProvider>
     ),
   },
   {
@@ -42,8 +45,8 @@ const router = createBrowserRouter([
   },
   {
     path: '/unauthorized',
-    element: <UnauthorizedView />
-  }
+    element: <UnauthorizedView />,
+  },
 ])
 
 createRoot(document.getElementById('root')!).render(

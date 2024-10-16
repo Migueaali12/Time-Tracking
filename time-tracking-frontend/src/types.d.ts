@@ -1,6 +1,6 @@
 export interface Employee {
   id: number
-  status: string
+  status: 'ACTIVE' | 'INACTIVE'
   name: string
   lastName: string
   dni: string
@@ -9,7 +9,6 @@ export interface Employee {
   faceImagePath: string
   faceEncoding: string
   positionId: number
-  position: string
   createdAt: Date
   updatedAt: Date
 }

@@ -1,16 +1,20 @@
-import { Box, Button, Card, Table, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react'
-import { IoMenu } from 'react-icons/io5'
-import { useAdminDrawer } from '../components/AdminDrawer'
+import { Button, Card, Table, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react'
 import { DashboardLayout } from '../layouts/DashboardLayout'
 import { useEffect, useState } from 'react'
 import { FaUserEdit } from 'react-icons/fa'
 import { MdDeleteForever } from 'react-icons/md'
 import { AdminModal } from '../components/AdminModal'
 import { useEmployee } from '../hooks/useEmployee'
+import { IoIosAdd } from 'react-icons/io'
+
+export interface typeModal {
+  type: 'create' | 'update'
+}
 
 export function AdminView() {
-  const { drawerComponent, onOpen } = useAdminDrawer()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const { employees, setEmployees } = useEmployee()
+  const [typeModal, setTypeModal] = useState<typeModal>({type:'create'})
 
   const openModal = () => {
     setIsModalOpen(true)
@@ -20,20 +24,24 @@ export function AdminView() {
     setIsModalOpen(false)
   }
 
-  const { employees, setEmployees } = useEmployee()
-
   useEffect(() => {
     setEmployees()
   }, [])
 
   return (
     <DashboardLayout>
-      <Box bg="#3182ce" w="100%" p={4} display={'flex'} justifyContent={'space-between'}>
-        <h2 className="text-xl font-bold text-white">Admin Dashboard</h2>
-        <Button size={'sm'} onClick={onOpen} rounded={'full'}>
-          <IoMenu size={'20'} />
-        </Button>
-      </Box>
+      <Button
+        colorScheme="blue"
+        ml={5}
+        rounded={'full'}
+        onClick={() => {
+          setTypeModal({type: 'create'})
+          openModal()
+        }}
+      >
+        <IoIosAdd size={20} />
+      </Button>
+      {isModalOpen && typeModal.type === 'create' ?  <AdminModal isOpen={isModalOpen} onClose={closeModal} employee={employees[0]} typeModal={typeModal}  /> : null}
 
       <Card m={5}>
         <TableContainer>
@@ -69,7 +77,7 @@ export function AdminView() {
                   <Td>{employee.email}</Td>
                   <Td>{employee.faceImagePath}</Td>
                   <Td>{employee.faceEncoding}</Td>
-                  <Td>{employee.position}</Td>
+                  <Td>{employee.positionId}</Td>
                   <Td>{new Date(employee.createdAt).toLocaleDateString()}</Td>
                   <Td>{new Date(employee.updatedAt).toLocaleDateString()}</Td>
                   <Td>
@@ -78,6 +86,7 @@ export function AdminView() {
                       size={'sm'}
                       rounded={'full'}
                       onClick={() => {
+                        setTypeModal({type: 'update'})
                         openModal()
                       }}
                     >
@@ -89,6 +98,7 @@ export function AdminView() {
                       <MdDeleteForever />
                     </Button>
                   </Td>
+                  {isModalOpen && <AdminModal isOpen={isModalOpen} onClose={closeModal} employee={employee} typeModal={typeModal}/>}
                 </Tr>
               ))}
             </Tbody>
@@ -102,8 +112,6 @@ export function AdminView() {
           </Table>
         </TableContainer>
       </Card>
-      {drawerComponent}
-      {isModalOpen && <AdminModal isOpen={isModalOpen} onClose={closeModal} />}
     </DashboardLayout>
   )
 }

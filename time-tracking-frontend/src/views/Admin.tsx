@@ -1,31 +1,19 @@
-import { Button, Card, Table, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react'
+import { Button, Card, Table, TableContainer, Tbody, Tfoot, Th, Thead, Tr } from '@chakra-ui/react'
 import { DashboardLayout } from '../layouts/DashboardLayout'
-import { useEffect, useState } from 'react'
-import { FaUserEdit } from 'react-icons/fa'
-import { MdDeleteForever } from 'react-icons/md'
-import { AdminModal } from '../components/AdminModal'
+import { useEffect } from 'react'
 import { useEmployee } from '../hooks/useEmployee'
 import { IoIosAdd } from 'react-icons/io'
-
-export interface typeModal {
-  type: 'create' | 'update'
-}
+import { RowEmployee } from '../components/RowEmployee'
+import { ModalType, useAdminModalForm } from '../components/AdminModal'
 
 export function AdminView() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { openModal, ModalFormComponent } = useAdminModalForm()
   const { employees, setEmployees } = useEmployee()
-  const [typeModal, setTypeModal] = useState<typeModal>({type:'create'})
-
-  const openModal = () => {
-    setIsModalOpen(true)
-  }
-
-  const closeModal = () => {
-    setIsModalOpen(false)
-  }
+  //const { openAlert, alertComponent } = useAdminAlertDialog(AlertType.DELETE)
 
   useEffect(() => {
     setEmployees()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -35,13 +23,12 @@ export function AdminView() {
         ml={5}
         rounded={'full'}
         onClick={() => {
-          setTypeModal({type: 'create'})
-          openModal()
+          openModal(ModalType.CREATE)
         }}
       >
         <IoIosAdd size={20} />
       </Button>
-      {isModalOpen && typeModal.type === 'create' ?  <AdminModal isOpen={isModalOpen} onClose={closeModal} employee={employees[0]} typeModal={typeModal}  /> : null}
+      {ModalFormComponent(undefined)}
 
       <Card m={5}>
         <TableContainer>
@@ -67,39 +54,7 @@ export function AdminView() {
             </Thead>
             <Tbody>
               {employees.map((employee) => (
-                <Tr key={employee.id}>
-                  <Td>{employee.id}</Td>
-                  <Td>{employee.status}</Td>
-                  <Td>{employee.name}</Td>
-                  <Td>{employee.lastName}</Td>
-                  <Td>{employee.dni}</Td>
-                  <Td>{employee.phone}</Td>
-                  <Td>{employee.email}</Td>
-                  <Td>{employee.faceImagePath}</Td>
-                  <Td>{employee.faceEncoding}</Td>
-                  <Td>{employee.positionId}</Td>
-                  <Td>{new Date(employee.createdAt).toLocaleDateString()}</Td>
-                  <Td>{new Date(employee.updatedAt).toLocaleDateString()}</Td>
-                  <Td>
-                    <Button
-                      colorScheme="blue"
-                      size={'sm'}
-                      rounded={'full'}
-                      onClick={() => {
-                        setTypeModal({type: 'update'})
-                        openModal()
-                      }}
-                    >
-                      <FaUserEdit />
-                    </Button>
-                  </Td>
-                  <Td>
-                    <Button colorScheme="blue" size={'sm'} rounded={'full'}>
-                      <MdDeleteForever />
-                    </Button>
-                  </Td>
-                  {isModalOpen && <AdminModal isOpen={isModalOpen} onClose={closeModal} employee={employee} typeModal={typeModal}/>}
-                </Tr>
+                <RowEmployee key={employee.id} employee={employee} />
               ))}
             </Tbody>
             <Tfoot>
@@ -112,6 +67,7 @@ export function AdminView() {
           </Table>
         </TableContainer>
       </Card>
+      {/* {alertComponent} */}
     </DashboardLayout>
   )
 }

@@ -16,7 +16,7 @@ Route::prefix('employee')->group(function () {
     Route::middleware('auth:sanctum')->get('/', [EmployeeController::class, 'getEmployee']);
     Route::middleware('auth:sanctum')->post('/add', [EmployeeController::class, 'addEmployee']);
     Route::middleware('auth:sanctum')->post('/delete', [EmployeeController::class, 'deleteEmployee']);
-    Route::middleware('auth:sanctum')->post('/update', [EmployeeController::class, 'updateEmployee']);
+    Route::middleware('auth:sanctum')->put('/update/{id}', [EmployeeController::class, 'updateEmployee']);
 });
 
 

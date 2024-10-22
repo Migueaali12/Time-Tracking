@@ -112,23 +112,15 @@ class EmployeeController extends Controller
         return response()->json($response, 200);
     }
 
-    public function updateEmployee(Request $request)
+    public function updateEmployee($id, Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'id' => 'required|integer'
-        ]);
-
-        $validatorResponse = $this->checkValidator($validator);
-        if ($validatorResponse) {
-            return $validatorResponse;
-        }
 
         $employee = Employee::find($request->id);
+
         if (!$employee) {
-            $response = $this->defaultMessage('Empleado no encontrado', null, 404);
+            $response = $this->defaultMessage($message = 'Empleado no encontrado', $employee, $status = 404);
             return response()->json($response, 404);
         }
-
 
         $validator = Validator::make($request->all(), [
             'status' => 'nullable|in:ACTIVE,INACTIVE',
@@ -145,13 +137,6 @@ class EmployeeController extends Controller
         $validatorResponse = $this->checkValidator($validator);
         if ($validatorResponse) {
             return $validatorResponse;
-        }
-
-        $employee = Employee::find($request->id);
-
-        if (!$employee) {
-            $response = $this->defaultMessage($message = 'Empleado no encontrado', $employee, $status = 404);
-            return response()->json($response, 404);
         }
 
         $employee->fill($request->only([

@@ -1,15 +1,28 @@
 import { Button, Card, Table, TableContainer, Tbody, Tfoot, Th, Thead, Tr } from '@chakra-ui/react'
 import { DashboardLayout } from '../layouts/DashboardLayout'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useEmployee } from '../hooks/useEmployee'
 import { IoIosAdd } from 'react-icons/io'
 import { RowEmployee } from '../components/RowEmployee'
-import { ModalType, useAdminModalForm } from '../components/AdminModal'
+import { AdminModalForm } from '../components/AdminModal'
+import { ClassEmployee, IEmployee } from '../models/iEmployee'
+
+export interface ModalState {
+  employee: IEmployee | null
+  isOpen: boolean
+}
 
 export function AdminView() {
-  const { openModal, ModalFormComponent } = useAdminModalForm()
   const { employees, setEmployees } = useEmployee()
-  //const { openAlert, alertComponent } = useAdminAlertDialog(AlertType.DELETE)
+  const [modalForm, setModalForm] = useState<ModalState>({ employee: null, isOpen: false })
+
+  const onOpen = (employee: IEmployee) => {
+    setModalForm({ employee: employee, isOpen: true })
+  }
+
+  const onClose = () => {
+    setModalForm((prevState) => ({ ...prevState, isOpen: false }))
+  }
 
   useEffect(() => {
     setEmployees()
@@ -23,12 +36,11 @@ export function AdminView() {
         ml={5}
         rounded={'full'}
         onClick={() => {
-          openModal(ModalType.CREATE)
+          onOpen(new ClassEmployee())
         }}
       >
         <IoIosAdd size={20} />
       </Button>
-      {ModalFormComponent(undefined)}
 
       <Card m={5}>
         <TableContainer>
@@ -54,7 +66,7 @@ export function AdminView() {
             </Thead>
             <Tbody>
               {employees.map((employee) => (
-                <RowEmployee key={employee.id} employee={employee} />
+                <RowEmployee key={employee.id} employee={employee} onOpen={onOpen} />
               ))}
             </Tbody>
             <Tfoot>
@@ -67,7 +79,7 @@ export function AdminView() {
           </Table>
         </TableContainer>
       </Card>
-      {/* {alertComponent} */}
+      {modalForm.isOpen && <AdminModalForm modalForm={modalForm} onClose={onClose} />}
     </DashboardLayout>
   )
 }

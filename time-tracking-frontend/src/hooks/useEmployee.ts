@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { EmployeeContext } from '../contexts/employee'
+import { EmployeeContext } from '../contexts/employees'
 
 export const useEmployee = () => {
   const context = useContext(EmployeeContext)

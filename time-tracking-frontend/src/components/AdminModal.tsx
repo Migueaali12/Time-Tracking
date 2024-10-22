@@ -13,37 +13,22 @@ import {
   FormErrorMessage,
   Input,
   Flex,
+  useToast,
 } from '@chakra-ui/react'
 import { Field, Form, Formik, FormikProps, FieldProps } from 'formik'
 import { number, object, string } from 'yup'
-import { Employee } from '../types'
-import { useState } from 'react'
-
-interface AdminFormProps {
-  status: 'ACTIVE' | 'INACTIVE'
-  name: string
-  lastName: string
-  dni: string
-  phone: string
-  email: string
-  // faceImagePath: string
-  // faceEncoding: string
-  positionId: number
-}
-
-export enum ModalType {
-  CREATE = 'CREATE',
-  EDIT = 'EDIT',
-}
+import { ModalState } from '../views/Admin'
+import { ClassEmployee, IEmployee } from '../models/iEmployee'
+import { useEmployee } from '../hooks/useEmployee'
 
 interface ModalProps {
-  type: ModalType
-  isOpen: boolean
+  modalForm: ModalState
+  onClose: () => void
 }
 
-export function useAdminModalForm() {
-  const [modalForm, setModalForm] = useState<ModalProps>({ type: ModalType.CREATE, isOpen: false })
-
+export function AdminModalForm({ modalForm, onClose }: ModalProps) {
+  const toast = useToast()
+  const { updateEmployee } = useEmployee()
   const validationSchema = object({
     satus: string(),
     name: string().required('El nombre es requerido'),
@@ -56,157 +41,116 @@ export function useAdminModalForm() {
     positionId: number().required('La posición es requerida'),
   })
 
-  const getInitialValues = (employee?: Employee): AdminFormProps => {
-    if (employee) {
-      return {
-        status: employee.status,
-        name: employee.name,
-        lastName: employee.lastName,
-        dni: employee.dni,
-        phone: employee.phone,
-        email: employee.email,
-        // faceImagePath: employee.face_image_path,
-        // faceEncoding: employee.face_encoding,
-        positionId: employee.positionId,
-      }
-    }
+  return (
+    <Modal isOpen={modalForm.isOpen} onClose={onClose} size={'3xl'} isCentered={true}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>{modalForm.employee ? 'Editar Empleado' : 'Crear Empleado'}</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Formik
+            initialValues={modalForm.employee ?? new ClassEmployee()}
+            validationSchema={validationSchema}
+            onSubmit={(employee, actions) => {
+              updateEmployee({ employee, actions, toast })
+            }}
+          >
+            {(props: FormikProps<IEmployee>) => (
+              <Form>
+                <main className="sm:flex gap-10">
+                  <Flex flexDirection={'column'} gap={2}>
+                    <Field name="status">
+                      {({ field, form }: FieldProps) => (
+                        <FormControl isInvalid={!!form.errors.status && !!form.touched.status}>
+                          <FormLabel>Estatus</FormLabel>
+                          <Select {...field}>
+                            <option value="ACTIVE">Activo</option>
+                            <option value="INACTIVE">Inactivo</option>
+                          </Select>
+                          <FormErrorMessage>{form.errors.status?.toString()}</FormErrorMessage>
+                        </FormControl>
+                      )}
+                    </Field>
 
-    return {
-      status: 'ACTIVE',
-      name: '',
-      lastName: '',
-      dni: '',
-      phone: '',
-      email: '',
-      // faceImagePath: '',
-      // faceEncoding: '',
-      positionId: 1,
-    }
-  }
+                    <Field name="name">
+                      {({ field, form }: FieldProps) => (
+                        <FormControl isInvalid={!!form.errors.name && !!form.touched.name}>
+                          <FormLabel>Nombre</FormLabel>
+                          <Input {...field} placeholder="Nombre" />
+                          <FormErrorMessage>{form.errors.name?.toString()}</FormErrorMessage>
+                        </FormControl>
+                      )}
+                    </Field>
 
-  const openModal = (type: ModalType) => {
-    setModalForm({ type: type, isOpen: true })
-  }
+                    <Field name="lastName">
+                      {({ field, form }: FieldProps) => (
+                        <FormControl isInvalid={!!form.errors.lastName && !!form.touched.lastName}>
+                          <FormLabel>Apellido</FormLabel>
+                          <Input {...field} placeholder="Apellido" />
+                          <FormErrorMessage>{form.errors.lastName?.toString()}</FormErrorMessage>
+                        </FormControl>
+                      )}
+                    </Field>
+                  </Flex>
 
-  const closeModal = () => {
-    setModalForm((prevState) => ({ ...prevState, isOpen: false }))
-  }
+                  <Flex flexDirection={'column'} gap={2}>
+                    <Field name="dni">
+                      {({ field, form }: FieldProps) => (
+                        <FormControl isInvalid={!!form.errors.dni && !!form.touched.dni}>
+                          <FormLabel>DNI</FormLabel>
+                          <Input {...field} placeholder="DNI" />
+                          <FormErrorMessage>{form.errors.dni?.toString()}</FormErrorMessage>
+                        </FormControl>
+                      )}
+                    </Field>
 
-  const ModalFormComponent = (employee?: Employee) => {
-    return (
-      <Modal isOpen={modalForm.isOpen} onClose={closeModal} size={'3xl'} isCentered={true}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{employee ? 'Editar Empleado' : 'Crear Empleado'}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Formik
-              initialValues={getInitialValues(employee)}
-              validationSchema={validationSchema}
-              onSubmit={() => {
-                // submit form
-                console.log('Submit form')
-              }}
-            >
-              {(props: FormikProps<AdminFormProps>) => (
-                <Form>
-                  <main className="sm:flex gap-10">
-                    <Flex flexDirection={'column'} gap={2}>
-                      <Field name="status">
-                        {({ field, form }: FieldProps) => (
-                          <FormControl isInvalid={!!form.errors.status && !!form.touched.status}>
-                            <FormLabel>Estatus</FormLabel>
-                            <Select {...field}>
-                              <option value="ACTIVE">Activo</option>
-                              <option value="INACTIVE">Inactivo</option>
-                            </Select>
-                            <FormErrorMessage>{form.errors.status?.toString()}</FormErrorMessage>
-                          </FormControl>
-                        )}
-                      </Field>
+                    <Field name="phone">
+                      {({ field, form }: FieldProps) => (
+                        <FormControl isInvalid={!!form.errors.phone && !!form.touched.phone}>
+                          <FormLabel>Teléfono</FormLabel>
+                          <Input {...field} placeholder="Teléfono" />
+                          <FormErrorMessage>{form.errors.phone?.toString()}</FormErrorMessage>
+                        </FormControl>
+                      )}
+                    </Field>
 
-                      <Field name="name">
-                        {({ field, form }: FieldProps) => (
-                          <FormControl isInvalid={!!form.errors.name && !!form.touched.name}>
-                            <FormLabel>Nombre</FormLabel>
-                            <Input {...field} placeholder="Nombre" />
-                            <FormErrorMessage>{form.errors.name?.toString()}</FormErrorMessage>
-                          </FormControl>
-                        )}
-                      </Field>
+                    <Field name="email">
+                      {({ field, form }: FieldProps) => (
+                        <FormControl isInvalid={!!form.errors.email && !!form.touched.email}>
+                          <FormLabel>Email</FormLabel>
+                          <Input {...field} placeholder="Email" />
+                          <FormErrorMessage>{form.errors.email?.toString()}</FormErrorMessage>
+                        </FormControl>
+                      )}
+                    </Field>
+                  </Flex>
 
-                      <Field name="lastName">
-                        {({ field, form }: FieldProps) => (
-                          <FormControl isInvalid={!!form.errors.lastName && !!form.touched.lastName}>
-                            <FormLabel>Apellido</FormLabel>
-                            <Input {...field} placeholder="Apellido" />
-                            <FormErrorMessage>{form.errors.lastName?.toString()}</FormErrorMessage>
-                          </FormControl>
-                        )}
-                      </Field>
-                    </Flex>
+                  <Flex flexDirection={'column'} gap={2}>
+                    <Field name="positionId">
+                      {({ field, form }: FieldProps) => (
+                        <FormControl isInvalid={!!form.errors.positionId && !!form.touched.positionId}>
+                          <FormLabel>Posición</FormLabel>
+                          <Select {...field}>
+                            <option value={1}>Contabilidad</option>
+                            <option value={2}>Sistemas</option>
+                          </Select>
+                          <FormErrorMessage>{form.errors.status?.toString()}</FormErrorMessage>
+                        </FormControl>
+                      )}
+                    </Field>
+                  </Flex>
+                </main>
 
-                    <Flex flexDirection={'column'} gap={2}>
-                      <Field name="dni">
-                        {({ field, form }: FieldProps) => (
-                          <FormControl isInvalid={!!form.errors.dni && !!form.touched.dni}>
-                            <FormLabel>DNI</FormLabel>
-                            <Input {...field} placeholder="DNI" />
-                            <FormErrorMessage>{form.errors.dni?.toString()}</FormErrorMessage>
-                          </FormControl>
-                        )}
-                      </Field>
-
-                      <Field name="phone">
-                        {({ field, form }: FieldProps) => (
-                          <FormControl isInvalid={!!form.errors.phone && !!form.touched.phone}>
-                            <FormLabel>Teléfono</FormLabel>
-                            <Input {...field} placeholder="Teléfono" />
-                            <FormErrorMessage>{form.errors.phone?.toString()}</FormErrorMessage>
-                          </FormControl>
-                        )}
-                      </Field>
-
-                      <Field name="email">
-                        {({ field, form }: FieldProps) => (
-                          <FormControl isInvalid={!!form.errors.email && !!form.touched.email}>
-                            <FormLabel>Email</FormLabel>
-                            <Input {...field} placeholder="Email" />
-                            <FormErrorMessage>{form.errors.email?.toString()}</FormErrorMessage>
-                          </FormControl>
-                        )}
-                      </Field>
-                    </Flex>
-
-                    <Flex flexDirection={'column'} gap={2}>
-                      <Field name="positionId">
-                        {({ field, form }: FieldProps) => (
-                          <FormControl isInvalid={!!form.errors.positionId && !!form.touched.positionId}>
-                            <FormLabel>Posición</FormLabel>
-                            <Select {...field}>
-                              <option value={1}>Contabilidad</option>
-                              <option value={2}>Sistemas</option>
-                            </Select>
-                            <FormErrorMessage>{form.errors.status?.toString()}</FormErrorMessage>
-                          </FormControl>
-                        )}
-                      </Field>
-                    </Flex>
-                  </main>
-
-                  <ModalFooter pr={0}>
-                    <Button colorScheme="blue" mr={3} isLoading={props.isSubmitting} type="submit">
-                      Enviar
-                    </Button>
-                  </ModalFooter>
-                </Form>
-              )}
-            </Formik>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    )
-  }
-
-  return { ModalFormComponent, openModal, closeModal, modalForm }
+                <ModalFooter pr={0}>
+                  <Button colorScheme="blue" mr={3} isLoading={props.isSubmitting} type="submit">
+                    Enviar
+                  </Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  )
 }

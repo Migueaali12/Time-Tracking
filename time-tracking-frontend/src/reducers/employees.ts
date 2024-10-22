@@ -1,13 +1,13 @@
-import { Employee } from '../types'
+import { IEmployee } from "../models/iEmployee";
 
 interface State {
-  employees: Employee[]
+  employees: IEmployee[]
 }
 
 type Action =
-  | { type: 'SET_EMPLOYEES'; payload: { employees: Employee[] } }
-  | { type: 'ADD_EMPLOYEE'; payload: { employee: Employee } }
-  | { type: 'UPDATE_EMPLOYEE'; payload: { employee: Employee } }
+  | { type: 'SET_EMPLOYEES'; payload: { employees: IEmployee[] } }
+  | { type: 'ADD_EMPLOYEE'; payload: { employee: IEmployee } }
+  | { type: 'UPDATE_EMPLOYEE'; payload: { employee: IEmployee } }
   | { type: 'DELETE_EMPLOYEE'; payload: { id: number } }
 
 export const initialState: State = {

@@ -10,7 +10,7 @@ import { AdminView } from './views/Admin.tsx'
 import { UserView } from './views/User.tsx'
 import { ProtectedRoute } from './validators/ProtectedRoute.tsx'
 import { UnauthorizedView } from './views/Unauthorized.tsx'
-import { EmployeeProvider } from './contexts/employee.tsx'
+import { EmployeeProvider } from './contexts/employees.tsx'
 
 const router = createBrowserRouter([
   {

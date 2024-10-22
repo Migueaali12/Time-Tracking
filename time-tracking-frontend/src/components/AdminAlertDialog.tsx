@@ -9,43 +9,41 @@ import {
 } from '@chakra-ui/react'
 import { useRef, useState } from 'react'
 import { useEmployee } from '../hooks/useEmployee'
+import { AlertState } from '../views/Admin'
 
-export enum AlertType {
-  DELETE = 'DELETE',
+export interface AlertDialogProps {
+  alertState: AlertState
+  closeAlert: () => void
 }
 
-export function useAdminAlertDialog(type: AlertType) {
- 
+export function AdminAlertDialog({ alertState, closeAlert }: AlertDialogProps) {
   const { deleteEmployee } = useEmployee()
-  const [isAlertOpen, setisAlertOpen] = useState(false)
   const cancelRef = useRef(null)
 
-  const openAlert = () => {
-    setisAlertOpen(true)
-  }
-
-  const closeAlert = () => {
-    setisAlertOpen(false)
-  }
-
   const alertComponent = (
-    <AlertDialog isOpen={isAlertOpen} leastDestructiveRef={cancelRef} onClose={closeAlert}>
+    <AlertDialog isOpen={alertState.isOpen} leastDestructiveRef={cancelRef} onClose={closeAlert}>
       <AlertDialogOverlay>
         <AlertDialogContent fontFamily={'Inter'}>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            {type === AlertType.DELETE ? 'Eliminar Empleado' : ''}
+            {alertState.employee_id && `Eliminar Empleado ${alertState.employee_id}`}
           </AlertDialogHeader>
 
-          <AlertDialogBody>
-            {type === AlertType.DELETE ? 'Estás seguro de eliminar el empleado, esta acción no se podrá deshacer.' : ''}
-          </AlertDialogBody>
+          <AlertDialogBody>Estás seguro de eliminar el empleado, esta acción no se podrá deshacer</AlertDialogBody>
 
           <AlertDialogFooter>
             <Button ref={cancelRef} onClick={closeAlert}>
               Cancelar
             </Button>
-            <Button colorScheme="red" onClick={} ml={3}>
-              {type === AlertType.DELETE ? 'Eliminar' : ''}
+            <Button
+              colorScheme="red"
+              ml={3}
+              onClick={() => {
+                if (alertState.employee_id !== null) {
+                  deleteEmployee(alertState.employee_id)
+                }
+              }}
+            >
+              Eliminar
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -53,5 +51,4 @@ export function useAdminAlertDialog(type: AlertType) {
     </AlertDialog>
   )
 
-  return { isAlertOpen, openAlert, alertComponent }
 }

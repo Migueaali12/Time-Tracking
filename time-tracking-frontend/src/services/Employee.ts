@@ -6,6 +6,12 @@ import { showToast } from '../functions/Toasts'
 
 const URL_API = 'http://127.0.0.1:8000/api/employee'
 
+interface FetchEmployeeProps {
+  employee: IEmployee
+  actions: FormikHelpers<IEmployee>
+  toast: (options?: UseToastOptions) => ToastId
+}
+
 export async function FSetEmployees() {
   const res = await fetch(`${URL_API}/`, {
     method: 'GET',
@@ -19,30 +25,44 @@ export async function FSetEmployees() {
   return data.employees
 }
 
-export async function FAddEmployee(employee: IEmployee) {
-  const res = await fetch(`${URL_API}/add`, {
-    headers: {
-      Authorization: `Bearer ${getAuthToken()}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    method: 'POST',
-    body: JSON.stringify({
-      status: employee.status,
-      name: employee.name,
-      lastname: employee.lastName,
-      dni: employee.dni,
-      phone: employee.phone,
-      email: employee.email,
-      face_image_path: employee.faceImagePath,
-      face_encoding: employee.faceEncoding,
-      position_id: employee.positionId,
-    }),
-  })
+export async function FAddEmployee({employee, toast, actions} : FetchEmployeeProps) {
+  try {
+    const res = await fetch(`${URL_API}/add`, {
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        status: employee.status,
+        name: employee.name,
+        lastname: employee.lastName,
+        dni: employee.dni,
+        phone: employee.phone,
+        email: employee.email,
+        face_image_path: 'aa',
+        face_encoding: 'bb',
+        position_id: employee.positionId,
+      }),
+    })
+  
+    const data = await res.json()
+  
+    if (res.ok && data.status === 200) {
+      showToast({ toast, title: 'Empleado creado', description: undefined, status: 'success' })
+      actions.setSubmitting(false)
+      return data.employees
+    } else {
+      showToast({ toast, title: 'Error al crear empleado', description: data.message, status: 'error' })
+      actions.setSubmitting(false)
+      return null
+    }
 
-  const data = await res.json()
-
-  return data.employees
+  } catch (err) {
+    showToast({ toast, title: 'No se pudo crear el empleado', description: `Error no especificado: ${err}`, status: 'error' })
+  }
+  actions.setSubmitting(false)
 }
 
 export async function FDeleteEmployee(id: number) {
@@ -62,13 +82,7 @@ export async function FDeleteEmployee(id: number) {
   return data.status
 }
 
-interface UpdateProps {
-  employee: IEmployee
-  actions: FormikHelpers<IEmployee>
-  toast: (options?: UseToastOptions) => ToastId
-}
-
-export async function FUpdateEmployee({ employee, actions, toast }: UpdateProps) {
+export async function FUpdateEmployee({ employee, actions, toast }: FetchEmployeeProps) {
   try {
     const res = await fetch(`${URL_API}/update/${employee.id}`, {
       headers: {
@@ -93,15 +107,15 @@ export async function FUpdateEmployee({ employee, actions, toast }: UpdateProps)
     const data = await res.json()
 
     if (res.ok && data.status === 200) {
-      actions.resetForm()
       showToast({ toast, title: 'Empleado actualizado', description: undefined, status: 'success' })
+      actions.setSubmitting(false)
       return data.employees
     } else {
       showToast({ toast, title: 'Error', description: data.message, status: 'error' })
       return null
     }
-  } catch {
-    showToast({ toast, title: 'Error', description: 'Error de conexión, intente más tarde', status: 'error' })
+  } catch (err) {
+    showToast({ toast, title: 'No se pudo editar el empleado', description: `Error no especificado: ${err}`, status: 'error' })
   }
   actions.setSubmitting(false)
 }

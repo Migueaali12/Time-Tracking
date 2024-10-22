@@ -28,7 +28,7 @@ interface ModalProps {
 
 export function AdminModalForm({ modalForm, onClose }: ModalProps) {
   const toast = useToast()
-  const { updateEmployee } = useEmployee()
+  const { updateEmployee, addEmployee } = useEmployee()
   const validationSchema = object({
     satus: string(),
     name: string().required('El nombre es requerido'),
@@ -44,16 +44,22 @@ export function AdminModalForm({ modalForm, onClose }: ModalProps) {
   return (
     <Modal isOpen={modalForm.isOpen} onClose={onClose} size={'3xl'} isCentered={true}>
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>{modalForm.employee ? 'Editar Empleado' : 'Crear Empleado'}</ModalHeader>
+      <ModalContent fontFamily={'Inter'}>
+        <ModalHeader>{modalForm.employee && modalForm.employee.id ? 'Editar Empleado' : 'Crear Empleado'}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Formik
             initialValues={modalForm.employee ?? new ClassEmployee()}
             validationSchema={validationSchema}
-            onSubmit={(employee, actions) => {
-              updateEmployee({ employee, actions, toast })
-            }}
+            onSubmit={
+              modalForm.employee && modalForm.employee.id
+                ? (employee, actions) => {
+                    updateEmployee({ employee, actions, toast })
+                  }
+                : (employee, actions) => {
+                    addEmployee({ employee, actions, toast })
+                  }
+            }
           >
             {(props: FormikProps<IEmployee>) => (
               <Form>

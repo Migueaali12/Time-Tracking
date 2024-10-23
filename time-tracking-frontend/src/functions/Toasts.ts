@@ -3,12 +3,12 @@ import { ToastId, UseToastOptions } from '@chakra-ui/react'
 type ToastProps = {
   toast: (options?: UseToastOptions) => ToastId
   title: string
-  description: string | undefined
+  description?: string
   status: 'info' | 'warning' | 'error' | 'success'
 }
 
 export function showToast({ toast, title, description, status }: ToastProps) {
-  if (description !== undefined) {
+  if (description) {
     toast({
       title: title,
       description: description,

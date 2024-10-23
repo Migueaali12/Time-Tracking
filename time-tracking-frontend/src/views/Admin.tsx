@@ -6,6 +6,7 @@ import { IoIosAdd } from 'react-icons/io'
 import { RowEmployee } from '../components/RowEmployee'
 import { AdminModalForm } from '../components/AdminModal'
 import { ClassEmployee, IEmployee } from '../models/iEmployee'
+import { AdminAlertDialog } from '../components/AdminAlertDialog'
 
 export interface ModalState {
   employee: IEmployee | null
@@ -22,11 +23,11 @@ export function AdminView() {
   const [modalForm, setModalForm] = useState<ModalState>({ employee: null, isOpen: false })
   const [alertDialog, setAlertDialog] = useState<AlertState>({employee_id: null, isOpen: false})
 
-  const onOpen = (employee: IEmployee) => {
+  const openModal = (employee: IEmployee) => {
     setModalForm({ employee: employee, isOpen: true })
   }
 
-  const onClose = () => {
+  const closeModal = () => {
     setModalForm((prevState) => ({ ...prevState, isOpen: false }))
   }
 
@@ -50,7 +51,7 @@ export function AdminView() {
         ml={5}
         rounded={'full'}
         onClick={() => {
-          onOpen(new ClassEmployee())
+          openModal(new ClassEmployee())
         }}
       >
         <IoIosAdd size={20} />
@@ -80,7 +81,7 @@ export function AdminView() {
             </Thead>
             <Tbody>
               {employees.map((employee) => (
-                <RowEmployee key={employee.id} employee={employee} onOpen={onOpen} />
+                <RowEmployee key={employee.id} employee={employee} openModal={openModal} openAlert={openAlert} />
               ))}
             </Tbody>
             <Tfoot>
@@ -93,7 +94,8 @@ export function AdminView() {
           </Table>
         </TableContainer>
       </Card>
-      {modalForm.isOpen && <AdminModalForm modalForm={modalForm} onClose={onClose} />}
+      {modalForm.isOpen && <AdminModalForm modalForm={modalForm} closeModal={closeModal} />}
+      {alertDialog.isOpen && <AdminAlertDialog alertState={alertDialog} closeAlert={closeAlert} />}
     </DashboardLayout>
   )
 }

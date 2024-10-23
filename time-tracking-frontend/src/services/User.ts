@@ -3,6 +3,7 @@ import { UseToastOptions, ToastId } from '@chakra-ui/react'
 import CryptoJS from 'crypto-js'
 import { NavigateFunction } from 'react-router-dom'
 import { getAuthToken } from '../functions/Token'
+import { showToast } from '../functions/Toasts'
 
 interface RegisterProps {
   values: {
@@ -43,34 +44,18 @@ export async function registerUser({ values, actions, toast }: RegisterProps) {
     })
     const data = await res.json()
 
-    if (res.ok) {
-      toast({
-        title: 'Usuario registrado',
-        description: data.message,
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-        position: 'top',
-      })
+    if (res.ok && data.status === 200) {
+      showToast({ toast, title: 'Usuario registrado', status: 'success' })
       actions.resetForm()
     } else {
-      toast({
-        title: 'Error al registar usuario',
-        description: data.message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'top',
-      })
+      showToast({ toast, title: 'Error al registar usuario', description: data.message, status: 'error' })
     }
-  } catch {
-    toast({
-      title: 'Error al registar usuario',
-      description: 'Error de conexión, intente más tarde',
+  } catch (err) {
+    showToast({
+      toast,
+      title: 'Error al registrar usuario',
+      description: `Error no especificado: ${err}`,
       status: 'error',
-      duration: 5000,
-      isClosable: true,
-      position: 'top',
     })
   }
   actions.setSubmitting(false)
@@ -107,18 +92,10 @@ export async function loginUser({ values, actions, toast, navigate }: LoginProps
 
     const data = await res.json()
 
-    if (res.ok) {
+    if (res.ok && data.status === 200) {
       const encryptedToken = CryptoJS.AES.encrypt(data.token, import.meta.env.VITE_REACT_APP_KEY).toString()
       localStorage.setItem('authToken', encryptedToken)
-
-      toast({
-        title: 'Usuario autenticado',
-        description: data.message,
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-        position: 'top',
-      })
+      showToast({ toast, title: 'Inicio de sesión exitoso!', status: 'success' })
       actions.resetForm()
 
       if (data.role === 'ADMIN') {
@@ -127,24 +104,10 @@ export async function loginUser({ values, actions, toast, navigate }: LoginProps
         navigate('/user-dashboard')
       }
     } else {
-      toast({
-        title: 'Error al inciar sesión',
-        description: data.message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'top',
-      })
+      showToast({ toast, title: 'Error al inciar sesión', description: data.message, status: 'error' })
     }
-  } catch {
-    toast({
-      title: 'Error al inciar sesión',
-      description: 'Error de conexión, intente más tarde',
-      status: 'error',
-      duration: 5000,
-      isClosable: true,
-      position: 'top',
-    })
+  } catch (err) {
+    showToast({ toast, title: 'Error al inciar sesión', description: `Error no especificado: ${err}`, status: 'error' })
   }
   actions.setSubmitting(false)
 }
@@ -169,24 +132,12 @@ export async function logoutUser({
 
     if (data.status === 200) {
       localStorage.removeItem('authToken')
-      toast({
-        title: 'Cierre de Sesión',
-        description: data.message,
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-        position: 'top',
-      })
+      showToast({ toast, title: 'Sesión cerrada', description: data.message, status: 'success' })
       navigate('/login')
+    } else {
+      showToast({ toast, title: 'Error al cerrar sesión', description: data.message, status: 'error' })
     }
-  } catch {
-    toast({
-      title: 'Error al cerrar sesión',
-      description: 'Error de conexión, intente más tarde',
-      status: 'error',
-      duration: 5000,
-      isClosable: true,
-      position: 'top',
-    })
+  } catch (err) {
+    showToast({ toast, title: 'Error al cerrar sesión', description: `Error no especificado: ${err}`, status: 'error' })
   }
 }

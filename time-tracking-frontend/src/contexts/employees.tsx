@@ -9,15 +9,23 @@ import { FormikHelpers } from 'formik'
 type EmployeeContextType = {
   employees: IEmployee[]
   setEmployees: () => void
-  addEmployee: ({ employee, actions, toast }: EmployeeActionType) => void
-  deleteEmployee: (id: number) => void
-  updateEmployee: ({ employee, actions, toast }: EmployeeActionType) => void
+  addEmployee: ({ employee, actions, toast, closeModal }: ActionType) => void
+  updateEmployee: ({ employee, actions, toast, closeModal }: ActionType) => void
+  deleteEmployee: ({ id, toast, setIsLoading, closeAlert }: DeleteType) => void
 }
 
-type EmployeeActionType = {
+export type ActionType = {
   employee: IEmployee
   actions: FormikHelpers<IEmployee>
   toast: (options?: UseToastOptions) => ToastId
+  closeModal: () => void
+}
+
+export type DeleteType = {
+  id: number
+  toast: (options?: UseToastOptions) => ToastId
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  closeAlert: () => void
 }
 
 export const EmployeeContext = createContext<EmployeeContextType | null>(null)
@@ -26,9 +34,9 @@ export const EmployeeContext = createContext<EmployeeContextType | null>(null)
 export const useEmployeeReducer = (): {
   employees: IEmployee[]
   setEmployees: () => void
-  addEmployee: ({ employee, actions, toast }: EmployeeActionType) => void
-  deleteEmployee: (id: number) => void
-  updateEmployee: ({ employee, actions, toast }: EmployeeActionType) => void
+  addEmployee: ({ employee, actions, toast, closeModal }: ActionType) => void
+  updateEmployee: ({ employee, actions, toast, closeModal }: ActionType) => void
+  deleteEmployee: ({ id, toast, setIsLoading, closeAlert }: DeleteType) => void
 } => {
   const [{ employees }, dispatch] = useReducer(employeeReducer, initialState)
 
@@ -40,23 +48,26 @@ export const useEmployeeReducer = (): {
     })
   }
 
-  const addEmployee = ({ employee, actions, toast }: EmployeeActionType) => {
+  const addEmployee = ({ employee, actions, toast, closeModal }: ActionType) => {
     FAddEmployee({ employee, actions, toast }).then((employees) => {
       dispatch({ type: 'ADD_EMPLOYEE', payload: { employee: employeeCamelCase(employees) } })
+      closeModal()
     })
   }
 
-  const deleteEmployee = (id: number) => {
-    FDeleteEmployee(id).then((status) => {
-      if (status === 200) {
-        dispatch({ type: 'DELETE_EMPLOYEE', payload: { id } })
-      }
-    })
-  }
-
-  const updateEmployee = ({ employee, actions, toast }: EmployeeActionType) => {
+  const updateEmployee = ({ employee, actions, toast, closeModal }: ActionType) => {
     FUpdateEmployee({ employee, actions, toast }).then((employees) => {
       dispatch({ type: 'UPDATE_EMPLOYEE', payload: { employee: employeeCamelCase(employees) } })
+      closeModal()
+    })
+  }
+
+  const deleteEmployee = ({id, toast, setIsLoading, closeAlert} : DeleteType) => {
+    FDeleteEmployee({ id, toast, setIsLoading}).then((status) => {
+      if (status === 200) {
+        dispatch({ type: 'DELETE_EMPLOYEE', payload: { id } })
+        closeAlert()
+      }
     })
   }
 

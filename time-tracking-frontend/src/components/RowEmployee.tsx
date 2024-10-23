@@ -2,17 +2,14 @@ import { Tr, Td, Button } from '@chakra-ui/react'
 import { FaUserEdit } from 'react-icons/fa'
 import { MdDeleteForever } from 'react-icons/md'
 import { IEmployee } from '../models/iEmployee'
-import { useAlertDialog } from './AdminAlertDialog'
-//import { AlertType, useAdminAlertDialog } from './AdminAlertDialog'
 
 interface RowProps {
   employee: IEmployee
-  onOpen: (employee: IEmployee) => void
+  openModal: (employee: IEmployee) => void
+  openAlert: (employee_id: number) => void
 }
 
-export function RowEmployee({ employee, onOpen }: RowProps) {
-  const { openAlert } = useAlertDialog()
-
+export function RowEmployee({ employee, openModal, openAlert }: RowProps) {
   return (
     <>
       <Tr key={employee.id}>
@@ -34,7 +31,7 @@ export function RowEmployee({ employee, onOpen }: RowProps) {
             size={'sm'}
             rounded={'full'}
             onClick={() => {
-              onOpen(employee)
+              openModal(employee)
             }}
           >
             <FaUserEdit />
@@ -47,7 +44,6 @@ export function RowEmployee({ employee, onOpen }: RowProps) {
             rounded={'full'}
             onClick={() => {
               if (employee.id !== null) {
-                console.log('Se abrio')
                 openAlert(employee.id)
               }
             }}

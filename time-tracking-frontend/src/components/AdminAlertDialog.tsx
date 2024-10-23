@@ -6,6 +6,7 @@ import {
   AlertDialogBody,
   AlertDialogFooter,
   Button,
+  useToast,
 } from '@chakra-ui/react'
 import { useRef, useState } from 'react'
 import { useEmployee } from '../hooks/useEmployee'
@@ -17,10 +18,12 @@ export interface AlertDialogProps {
 }
 
 export function AdminAlertDialog({ alertState, closeAlert }: AlertDialogProps) {
+  const [isLoading, setIsLoading] = useState(false)
   const { deleteEmployee } = useEmployee()
   const cancelRef = useRef(null)
+  const toast = useToast()
 
-  const alertComponent = (
+  return (
     <AlertDialog isOpen={alertState.isOpen} leastDestructiveRef={cancelRef} onClose={closeAlert}>
       <AlertDialogOverlay>
         <AlertDialogContent fontFamily={'Inter'}>
@@ -37,9 +40,11 @@ export function AdminAlertDialog({ alertState, closeAlert }: AlertDialogProps) {
             <Button
               colorScheme="red"
               ml={3}
+              isLoading={isLoading}
               onClick={() => {
                 if (alertState.employee_id !== null) {
-                  deleteEmployee(alertState.employee_id)
+                  setIsLoading(true)
+                  deleteEmployee({ id: alertState.employee_id, toast, setIsLoading, closeAlert })
                 }
               }}
             >
@@ -50,5 +55,4 @@ export function AdminAlertDialog({ alertState, closeAlert }: AlertDialogProps) {
       </AlertDialogOverlay>
     </AlertDialog>
   )
-
 }

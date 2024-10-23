@@ -23,10 +23,10 @@ import { useEmployee } from '../hooks/useEmployee'
 
 interface ModalProps {
   modalForm: ModalState
-  onClose: () => void
+  closeModal: () => void
 }
 
-export function AdminModalForm({ modalForm, onClose }: ModalProps) {
+export function AdminModalForm({ modalForm, closeModal }: ModalProps) {
   const toast = useToast()
   const { updateEmployee, addEmployee } = useEmployee()
   const validationSchema = object({
@@ -42,7 +42,7 @@ export function AdminModalForm({ modalForm, onClose }: ModalProps) {
   })
 
   return (
-    <Modal isOpen={modalForm.isOpen} onClose={onClose} size={'3xl'} isCentered={true}>
+    <Modal isOpen={modalForm.isOpen} onClose={closeModal} size={'3xl'} isCentered={true}>
       <ModalOverlay />
       <ModalContent fontFamily={'Inter'}>
         <ModalHeader>{modalForm.employee && modalForm.employee.id ? 'Editar Empleado' : 'Crear Empleado'}</ModalHeader>
@@ -54,10 +54,10 @@ export function AdminModalForm({ modalForm, onClose }: ModalProps) {
             onSubmit={
               modalForm.employee && modalForm.employee.id
                 ? (employee, actions) => {
-                    updateEmployee({ employee, actions, toast })
+                    updateEmployee({ employee, actions, toast, closeModal })
                   }
                 : (employee, actions) => {
-                    addEmployee({ employee, actions, toast })
+                    addEmployee({ employee, actions, toast, closeModal })
                   }
             }
           >

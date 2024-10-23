@@ -6,7 +6,7 @@ import { showToast } from '../functions/Toasts'
 
 const URL_API = 'http://127.0.0.1:8000/api/employee'
 
-interface FetchEmployeeProps {
+interface FetchProps {
   employee: IEmployee
   actions: FormikHelpers<IEmployee>
   toast: (options?: UseToastOptions) => ToastId
@@ -25,7 +25,7 @@ export async function FSetEmployees() {
   return data.employees
 }
 
-export async function FAddEmployee({employee, toast, actions} : FetchEmployeeProps) {
+export async function FAddEmployee({ employee, toast, actions }: FetchProps) {
   try {
     const res = await fetch(`${URL_API}/add`, {
       headers: {
@@ -46,11 +46,11 @@ export async function FAddEmployee({employee, toast, actions} : FetchEmployeePro
         position_id: employee.positionId,
       }),
     })
-  
+
     const data = await res.json()
-  
+
     if (res.ok && data.status === 200) {
-      showToast({ toast, title: 'Empleado creado', description: undefined, status: 'success' })
+      showToast({ toast, title: 'Empleado creado', status: 'success' })
       actions.setSubmitting(false)
       return data.employees
     } else {
@@ -58,31 +58,59 @@ export async function FAddEmployee({employee, toast, actions} : FetchEmployeePro
       actions.setSubmitting(false)
       return null
     }
-
   } catch (err) {
-    showToast({ toast, title: 'No se pudo crear el empleado', description: `Error no especificado: ${err}`, status: 'error' })
+    showToast({
+      toast,
+      title: 'No se pudo crear el empleado',
+      description: `Error no especificado: ${err}`,
+      status: 'error',
+    })
   }
   actions.setSubmitting(false)
 }
 
-export async function FDeleteEmployee(id: number) {
-  const res = await fetch(`${URL_API}/delete`, {
-    headers: {
-      Authorization: `Bearer ${getAuthToken()}`,
-      Accept: 'application/json',
-    },
-    method: 'POST',
-    body: JSON.stringify({
-      employee_id: id,
-    }),
-  })
-
-  const data = await res.json()
-
-  return data.status
+interface FetchDeleteProps {
+  id: number,
+  toast: (options?: UseToastOptions) => ToastId
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export async function FUpdateEmployee({ employee, actions, toast }: FetchEmployeeProps) {
+export async function FDeleteEmployee({ id, toast, setIsLoading }: FetchDeleteProps) {
+  try {
+    const res = await fetch(`${URL_API}/delete`, {
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        employee_id: id,
+      }),
+    })
+
+    const data = await res.json()
+
+    if (res.ok && data.status === 200) {
+      setIsLoading(false)
+      showToast({ toast, title: 'Empleado eliminado', status: 'success' })
+      return data.status
+    } else {
+      setIsLoading(false)
+      showToast({ toast, title: 'Error al eliminar el empleado', description: data.message, status: 'error' })
+    }
+  } catch (err) {
+    showToast({
+      toast,
+      title: 'Error al eliminar el empleado',
+      description: `Error no especificado: ${err}`,
+      status: 'error',
+    })
+  }
+  setIsLoading(false)
+}
+
+export async function FUpdateEmployee({ employee, actions, toast }: FetchProps) {
   try {
     const res = await fetch(`${URL_API}/update/${employee.id}`, {
       headers: {
@@ -107,7 +135,7 @@ export async function FUpdateEmployee({ employee, actions, toast }: FetchEmploye
     const data = await res.json()
 
     if (res.ok && data.status === 200) {
-      showToast({ toast, title: 'Empleado actualizado', description: undefined, status: 'success' })
+      showToast({ toast, title: 'Empleado actualizado', status: 'success' })
       actions.setSubmitting(false)
       return data.employees
     } else {
@@ -115,7 +143,12 @@ export async function FUpdateEmployee({ employee, actions, toast }: FetchEmploye
       return null
     }
   } catch (err) {
-    showToast({ toast, title: 'No se pudo editar el empleado', description: `Error no especificado: ${err}`, status: 'error' })
+    showToast({
+      toast,
+      title: 'No se pudo editar el empleado',
+      description: `Error no especificado: ${err}`,
+      status: 'error',
+    })
   }
   actions.setSubmitting(false)
 }

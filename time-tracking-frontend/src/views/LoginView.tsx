@@ -59,7 +59,16 @@ export function LoginForm() {
                 </Field>
 
                 <CardFooter display={'flex'} flexDirection={'column'}>
-                  <Button mt={4} colorScheme="blue" isLoading={props.isSubmitting} type="submit">
+                  <Button
+                    bg={'rOrange.100'}
+                    _hover={{ bg: 'rOrange.800' }}
+                    _active={{ bg: 'rOrange.900' }}
+                    rounded={'full'}
+                    textColor={'white'}
+                    mt={4}
+                    isLoading={props.isSubmitting}
+                    type="submit"
+                  >
                     Iniciar sesión
                   </Button>
                 </CardFooter>

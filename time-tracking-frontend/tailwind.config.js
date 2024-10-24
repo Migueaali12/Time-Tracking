@@ -10,7 +10,8 @@ export default {
     },
     extend: {
       colors: {
-        'hwhite': ['#f3f3f3'],
+        'hWhite': ['#f3f3f3'],
+        'orangeRedime': ['#FF4C02'],
       },
     },
   },

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import { Alert, AlertIcon } from '@chakra-ui/react'
+import { Alert, AlertIcon, Spinner } from '@chakra-ui/react'
 import { getAuthToken } from '../functions/Token'
 
 interface ProtectedRouteProps {
@@ -18,7 +18,6 @@ export function ProtectedRoute({ children, roles }: ProtectedRouteProps) {
 
       if (encryptedToken) {
         try {
-
           const res = await fetch(`http://127.0.0.1:8000/api/user/validate-token`, {
             method: 'GET',
             headers: {
@@ -45,20 +44,20 @@ export function ProtectedRoute({ children, roles }: ProtectedRouteProps) {
     }
 
     checkAuthorization()
-  }, [roles]) 
+  }, [roles])
 
   if (isLoading) {
     return (
-        <Alert status='success' h={'20'} fontSize={'xl'}>
+      <Alert status="success" h={'20'} fontSize={'xl'}>
         <AlertIcon />
-        Cargando...
+        <h2 className='mr-5'>Cargando</h2> <Spinner color='green.600' />
       </Alert>
     )
   }
 
   if (isAuthorized) {
-    return <>{children}</> 
+    return <>{children}</>
   } else {
-    return <Navigate to="/unauthorized" /> 
+    return <Navigate to="/unauthorized" />
   }
 }

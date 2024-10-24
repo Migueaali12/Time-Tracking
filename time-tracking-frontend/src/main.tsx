@@ -11,6 +11,7 @@ import { UserView } from './views/User.tsx'
 import { ProtectedRoute } from './validators/ProtectedRoute.tsx'
 import { UnauthorizedView } from './views/Unauthorized.tsx'
 import { EmployeeProvider } from './contexts/employees.tsx'
+import theme from './theme.ts'
 
 const router = createBrowserRouter([
   {
@@ -49,9 +50,11 @@ const router = createBrowserRouter([
   },
 ])
 
+
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <RouterProvider router={router} />
     </ChakraProvider>
   </StrictMode>,

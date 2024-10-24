@@ -1,5 +1,5 @@
 import { Button, Card, Table, TableContainer, Tbody, Tfoot, Th, Thead, Tr } from '@chakra-ui/react'
-import { DashboardLayout } from '../layouts/DashboardLayout'
+import { AdminLayout } from '../layouts/AdminLayout'
 import { useEffect, useState } from 'react'
 import { useEmployee } from '../hooks/useEmployee'
 import { IoIosAdd } from 'react-icons/io'
@@ -45,11 +45,11 @@ export function AdminView() {
   }, [])
 
   return (
-    <DashboardLayout>
+    <AdminLayout>
       <Button
         colorScheme="blue"
-        ml={5}
         rounded={'full'}
+        mb={5}
         onClick={() => {
           openModal(new ClassEmployee())
         }}
@@ -57,7 +57,7 @@ export function AdminView() {
         <IoIosAdd size={20} />
       </Button>
 
-      <Card m={5}>
+      <Card>
         <TableContainer>
           <Table variant="simple">
             {/* <TableCaption>Imperial to metric conversion factors</TableCaption> */}
@@ -96,6 +96,6 @@ export function AdminView() {
       </Card>
       {modalForm.isOpen && <AdminModalForm modalForm={modalForm} closeModal={closeModal} />}
       {alertDialog.isOpen && <AdminAlertDialog alertState={alertDialog} closeAlert={closeAlert} />}
-    </DashboardLayout>
+    </AdminLayout>
   )
 }

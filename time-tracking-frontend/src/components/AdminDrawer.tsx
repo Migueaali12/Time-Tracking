@@ -27,9 +27,7 @@ export function useAdminDrawer() {
           <h2 className="italic font-semibold text-2xl">Time Tracking</h2>
         </DrawerHeader>
         <DrawerBody>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
+
         </DrawerBody>
 
         <DrawerFooter>

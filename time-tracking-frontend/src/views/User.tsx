@@ -1,3 +1,3 @@
 export function UserView() {
-  return <h1>UserView</h1>
+  return <h1>User Page</h1>
 }

@@ -1,22 +1,17 @@
-import { Button } from '@chakra-ui/react'
-import { LoginLayout } from '../layouts/LoginLayaout'
-import { Link } from 'react-router-dom'
+import { Card, CardBody, Box, AlertDescription } from '@chakra-ui/react';
+import { HomePageLayout } from '../layouts/HomeLayout'
 
 export function Homepage() {
   return (
-    <LoginLayout>
-      <main>
-        <h1 className="text-9xl font-bold italic">Time Tracking</h1>
-        <section className="flex py-5">
-        <Button colorScheme="blue" >
-            <Link to={'/register'}>Registrate</Link>
-          </Button>
-          <h2 className="self-center font-bold mx-3">O</h2>
-          <Button colorScheme="blue" >
-            <Link to={'/login'}>Inicia Sesión</Link>
-          </Button>
-        </section>
-      </main>
-    </LoginLayout>
+    <HomePageLayout>
+      <Card height={'40%'} width={'60%'} my={'280px'}>
+        <CardBody display={'flex'} justifyContent={'space-between'} alignItems={'center'} p={'10'}>
+          <h1 className="text-5xl font-bold italic">Registra tu llegada</h1>
+          <Box width={'30%'} height={'full'} bg={'blue.200'}>
+            
+          </Box>
+        </CardBody>
+      </Card>
+    </HomePageLayout>
   )
 }
